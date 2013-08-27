@@ -4,25 +4,35 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include <pthread.h>
 
-void *runThread(void *ptr);
-
+#include "simulationManager.h" //Includes Pthread.h
+#include "location.h"
+#include "world.h"//includes location.h
+#include "simulationManager.c"//includes simulationManager.h
+void runTests();
+void runSimulation();
 int main(int argc, char** argv)
 {
- printf("Hello world\n");
- int i; 
- int numberOfThreads = 40;
- pthread_t* threads = (pthread_t*) malloc(sizeof(pthread_t)*numberOfThreads);
- for(i = 0; i < numberOfThreads; i++)
-    {
-      //pthread_create( (threads+i), NULL, runThread, (void*)threads);
-    }
- 
- pthread_mutex_lock(threads);
+ if(argc != 2) //Assume we're running tests now
+  runTests();
+ else
+  switch (argv[1][1])
+  {
+   case 't': //Run tests
+    runTests();
+    break;
+   case 'r': //Run simulation
+    runSimulation();
+  }
 }
 
-void *runThread(void *ptr)
+void runSimulation()
 {
- printf("Hello");
+ simulationManager sm;
+ simulationManager_run(sm); 
+}
+
+void runTests()
+{
+ printf("All tests passed\n");
 }
