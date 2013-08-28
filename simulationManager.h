@@ -3,12 +3,10 @@
 
 #include <pthread.h> 
 #include "config.c" 
-
+#include "world.h"
 typedef struct simulationManager
 {
  world w;
- agent agents[WORLD_SIZE*WORLD_SIZE];
- bool agentInUse[WORLD_SIZE*WORLD_SIZE];
  pthread_t* threads[NUMBER_OF_THREADS];
 
 } simulationManager; 

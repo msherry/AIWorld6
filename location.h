@@ -1,6 +1,7 @@
 #ifndef location_h
 #define location_h
 
+#include "agent.h"
 typedef struct location
 {
  agent* a;

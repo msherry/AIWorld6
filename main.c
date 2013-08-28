@@ -6,8 +6,10 @@
 #include <math.h>
 
 #include "simulationManager.h" //Includes Pthread.h
+#include "agent.h"
 #include "location.h"
 #include "world.h"//includes location.h
+#include "world.c"
 #include "simulationManager.c"//includes simulationManager.h
 void runTests();
 void runSimulation();
