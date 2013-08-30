@@ -33,7 +33,7 @@ int main(int argc, char** argv)
 void runSimulation()
 {
  simulationManager sm;
- simulationManager_run(sm); 
+ simulationManager_run(&sm); 
 }
 
 void runTests()

@@ -12,21 +12,21 @@ void intelTest_surviveBetterTogether(simulationManager *sm);
 void runAllTests(simulationManager *sm)
 {
  char *worldString;
- worldString = world_toString(sm->w);
+ worldString = world_toString(&(sm->w));
  intelTest_existAndLive(sm);
- world_fromString(sm->w,worldString);
+ world_fromString(&(sm->w),worldString);
  intelTest_liveInToughPlaces(sm);
- world_fromString(sm->w,worldString);
+ world_fromString(&(sm->w),worldString);
  intelTest_similarDNA(sm);
- world_fromString(sm->w,worldString);
+ world_fromString(&(sm->w),worldString);
  intelTest_doObviouslyStupidThings(sm);
- world_fromString(sm->w,worldString);
+ world_fromString(&(sm->w),worldString);
  intelTest_surviveNewEnvironment(sm);
- world_fromString(sm->w,worldString);
+ world_fromString(&(sm->w),worldString);
  intelTest_survivePredator(sm);
- world_fromString(sm->w,worldString);
+ world_fromString(&(sm->w),worldString);
  intelTest_surviveBetterTogether(sm);
- world_fromString(sm->w,worldString);
+ world_fromString(&(sm->w),worldString);
 }
 void intelTest_existAndLive(simulationManager *sm)
 {;
