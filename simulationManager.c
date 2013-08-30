@@ -26,22 +26,15 @@ void simulationManager_run(simulationManager sm)
 void simulationManager_setupThreads(simulationManager sm) {
  int i;
  for(i = 0; i < NUMBER_OF_THREADS; i++) {
-  pthread_mutex_lock(&(sm.threadControls[i].actionLock));//We don't want workers to do anything at this time
-  sm.threadControls[i].runAgentDecision = 0;
-  sm.threadControls[i].runAgentAction = 0;
-  pthread_create( &(sm.threads[i]), NULL, simulationManager_thread_run, (void*)(&(sm.threadControls[i])));  
+  printf("didn't do anything to setup threads");
  }
 }
 void simulationManager_cleanupThreads(simulationManager sm) {
  int i;
  printf("cleaning threads");
  for(i = 0; i < NUMBER_OF_THREADS; i++) {
-  sm.threadControls[i].done = 1;
-  printf("set done");
-  pthread_mutex_unlock(&(sm.threadControls[i].actionLock));//We don't want workers to do anything at this time
-  printf("unlocked"); 
-  pthread_join( sm.threads[i], NULL);
-  printf("joined");
+  printf("didn't do anything to clean up threads");
+  //pthread_join( sm.threads[i], NULL);
  }
 }
 
@@ -64,10 +57,10 @@ void simulationManager_seedAgents(simulationManager sm) {
 void simulationManager_signalThreadsToGo(simulationManager sm) {
  int i;
  for(i = 0; i < NUMBER_OF_THREADS; i++) {
-  pthread_mutex_unlock(&(sm.threadControls[i].actionLock));//Releasing the worker threads to take action again
+  printf("didn't signal");//pthread_mutex_unlock(&(sm.threadControls[i].actionLock));//Releasing the worker threads to take action again
  }
  for(i = 0; i < NUMBER_OF_THREADS; i++) {
-  pthread_mutex_lock(&(sm.threadControls[i].actionLock));//Gather all the locks before anyone is allowed to do anything
+  printf("didn't signal"); //pthread_mutex_lock(&(sm.threadControls[i].actionLock));//Gather all the locks before anyone is allowed to do anything
  }
 }
 

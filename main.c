@@ -11,6 +11,7 @@
 #include "world.h"//includes location.h
 #include "world.c"
 #include "simulationManager.c"//includes simulationManager.h
+#include "threadManager.c"
 void runTests();
 void runSimulation();
 int main(int argc, char** argv)
@@ -36,5 +37,8 @@ void runSimulation()
 
 void runTests()
 {
- printf("All tests passed\n");
+ if(threadManager_test() == 1)
+   printf("Passed: Thread manager tests\n");
+ else
+   printf("Failed: Thread manager tests\n");
 }
