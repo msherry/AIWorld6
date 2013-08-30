@@ -10,8 +10,9 @@
 #include "location.h"
 #include "world.h"//includes location.h
 #include "world.c"
-#include "simulationManager.c"//includes simulationManager.h
 #include "threadManager.c"
+#include "intelligenceTests.c"
+#include "simulationManager.c"//includes simulationManager.h
 void runTests();
 void runSimulation();
 int main(int argc, char** argv)

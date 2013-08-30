@@ -17,4 +17,13 @@ void world_createFromScratch(world w)
  } 
 }
 
+char *world_toString(world w)
+{
+ printf("did nothing to save world\n");
+ return "none";
+}
+void world_fromString(world w, char *st)
+{
+ printf("did nothing to load the world\n");
+}
 #endif

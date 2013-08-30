@@ -2,6 +2,7 @@
 #define SIMULATIONMANAGER_C 
 #include "simulationManager.h"
 #include "simulationManager_thread.c"
+#include "threadManager.c"
 #include <pthread.h>
 void simulationManager_setupThreads(simulationManager sm);
 void simulationManager_cleanupThreads(simulationManager sm);
@@ -19,15 +20,15 @@ void simulationManager_run(simulationManager sm)
  simulationManager_setupThreads(sm);
  simulationManager_runIterations(sm, WORLD_ITERATIONS,SEED_INTERVAL,SEED_DURATION);
  simulationManager_runIntelligenceTests(sm);
- printf("done with intelligence tests");
  simulationManager_cleanupThreads(sm);
 }
 
 void simulationManager_setupThreads(simulationManager sm) {
  int i;
  for(i = 0; i < NUMBER_OF_THREADS; i++) {
-  printf("didn't do anything to setup threads");
+   initThread(&(sm.threadControls[i]), &(sm.threads[i]), simulationManager_thread_run);
  }
+
 }
 void simulationManager_cleanupThreads(simulationManager sm) {
  int i;
@@ -41,26 +42,24 @@ void simulationManager_cleanupThreads(simulationManager sm) {
 void simulationManager_runIterations(simulationManager sm, int iterations, int seedInterval, int seedDuration) {
  int i;
  for(i = 0; i < iterations; i++) {
-  if(i % seedInterval == 0 && i < seedDuration)
-   simulationManager_seedAgents(sm);
-  simulationManager_runAgentDecisions(sm); //Single-threaded
-  simulationManager_runAgentActions(sm); //Multi-threaded
+   if(i % seedInterval == 0 && i < seedDuration)
+     simulationManager_seedAgents(sm);
+   simulationManager_runAgentDecisions(sm); //Single-threaded
+   simulationManager_runAgentActions(sm); //Multi-threaded
  } 
 }
 
 void simulationManager_seedAgents(simulationManager sm) { 
- int i;
- i = 0;
- i++;
+ printf("Did nothing to seed agents\n");
 }
 
 void simulationManager_signalThreadsToGo(simulationManager sm) {
  int i;
- for(i = 0; i < NUMBER_OF_THREADS; i++) {
-  printf("didn't signal");//pthread_mutex_unlock(&(sm.threadControls[i].actionLock));//Releasing the worker threads to take action again
+ for(i = 0; i < NUMBER_OF_THREADS; i++)  {
+   notifyChildOfWorkToDo(&(sm.threadControls[i])); //This will *not* block
  }
  for(i = 0; i < NUMBER_OF_THREADS; i++) {
-  printf("didn't signal"); //pthread_mutex_lock(&(sm.threadControls[i].actionLock));//Gather all the locks before anyone is allowed to do anything
+   blockOnChildFinishingWork(&(sm.threadControls[i]));  //This will block
  }
 }
 
