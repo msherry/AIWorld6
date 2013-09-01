@@ -42,4 +42,8 @@ void runTests()
    printf("Passed: Thread manager tests\n");
  else
    printf("Failed: Thread manager tests\n");
+ if(intelTest_staticAnalysis_test() == 1)
+   printf("Passed: Static analysis tests\n");
+ else
+   printf("Failed: Static analysis tests\n");
 }

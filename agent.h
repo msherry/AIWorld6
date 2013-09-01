@@ -3,7 +3,8 @@
 
 typedef struct agent
 {
- int i; 
+ int i;
+ float energy; 
 } agent; 
 
 #endif
