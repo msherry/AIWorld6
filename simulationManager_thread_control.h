@@ -4,6 +4,7 @@ typedef void (*functiontype)();
 
 typedef struct simulationManager_thread_control
 {
+ int childNumber;
  volatile int runAgentDecision;
  volatile int runAgentAction;
  volatile int done;

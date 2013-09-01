@@ -3,12 +3,13 @@
 #include <pthread.h>
 
 void *initChild(void *args);
-void initThread(simulationManager_thread_control *tc, pthread_t *t, void *start_routine)
+void initThread(simulationManager_thread_control *tc, pthread_t *t, void *start_routine, int cn)
 { //This must be called by the parent before the child starts up
  tc->initComplete = 0;
  tc->runAgentDecision = 0;
  tc->runAgentAction = 0;
  tc->done = 0;
+ tc->childNumber = cn;
  tc->childHasThisLock = 'a';
  tc->parentHasThisLock = 'b'; 
  tc->subRoutine = start_routine;
@@ -123,7 +124,7 @@ int threadManager_test() {
  pthread_t worker[threads];
  simulationManager_thread_control tc[threads];
  for(i = 0; i < threads; i++) 
-   initThread(&(tc[i]), &(worker[i]), threadManager_test_run);
+   initThread(&(tc[i]), &(worker[i]), threadManager_test_run,0);
  for(j = 0; j < iterations; j++) {
    for(i = 0; i < threads; i++)  {
     notifyChildOfWorkToDo(&(tc[i])); //This will *not* block

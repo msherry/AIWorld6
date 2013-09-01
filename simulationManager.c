@@ -19,7 +19,7 @@ void simulationManager_run(simulationManager *sm)
 void simulationManager_setupThreads(simulationManager *sm) {
  int i;
  for(i = 0; i < NUMBER_OF_THREADS; i++) {
-   initThread(&(sm->threadControls[i]), &(sm->threads[i]), simulationManager_thread_run);
+   initThread(&(sm->threadControls[i]), &(sm->threads[i]), simulationManager_thread_run,i);
  }
 
 }
@@ -72,7 +72,9 @@ void simulationManager_runAgentActions(simulationManager *sm) { //Multi-threaded
 }
 
 void simulationManager_runIntelligenceTests(simulationManager *sm) {
- printf("did nothing to run intelligence tests\n");
+ intelligenceTestsResults res;
+ intelTest_staticAnalysis(sm,&res);
+ intelTests_printResults(&res);
 }
 
 #endif

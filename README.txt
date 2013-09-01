@@ -30,9 +30,35 @@ How can you tell if something is intelligent?
  * [SIMULATION] Do they survive better spread out or lumped together
  ??* They save up and then expend in a big way, and can do this in patterns
 
-Tests I'd like to perform
+This should be more like 'things I'd like to prove' - that these complexities benefit them
 * Move and attack vs. move-attack
 * Move-only vs. move-attack
 * Changing climate
 * Give them language 
-* Take a set of agents from an evolved world, place them randomly on a new world vs. place them together on a new world
+* Take a set of agents from an evolved world, place them randomly on a new world vs. place them togethe on a new world
+* Given 1 hormone vs.0 vs. 5, how do agents perform? (do they benefit from having more, or even no conversation?)
+
+IMPLEMENTATION: Agent senses
+* Can see far, but directional: only good vision in front.
+* Can see food values, can see passibility values, can see agents, can see 'hormone' values[triple pair] 
+ ---  3
+----- 5
+----- 5
+--a-- 4
+----- 5
+22 inputs per type
+
+IMPLEMENTATION: Agent actions
+* hormone set
+* decision
+** grow (no other agents nearby)
+** move forward
+** move left
+** move right
+** move back
+** turn left
+** turn right
+** attack forward
+** attack left
+** attack right 
+
