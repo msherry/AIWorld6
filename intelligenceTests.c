@@ -78,8 +78,6 @@ void intelTest_staticAnalysis(simulationManager *sm, intelligenceTestsResults *r
  res->worldFoodDistribution[2] = listOfFood[ws*ws*2/4];
  res->worldFoodDistribution[3] = listOfFood[ws*ws*3/4];
  res->worldFoodDistribution[4] = listOfFood[ws*ws-1];
- //printf("---Exist and live test---\n");
- //printf("  * %i agents, distribution of energy (25pct blocks): [%f-%f-%f-%f-%f]\n",res->totalAgents,res->energyDistribution[0],res->energyDistribution[1],res->energyDistribution[2],res->energyDistribution[3],res->energyDistribution[4]);
 }
 int intelTest_staticAnalysis_test()
 {
@@ -102,16 +100,43 @@ int intelTest_staticAnalysis_test()
  sm.w.locs[0][1].a = &ags[2];
  sm.w.locs[1][0].a = &ags[1];
  sm.w.locs[2][1].a = &ags[0];
+ sm.w.locs[0][0].f = 10;
+ sm.w.locs[0][1].f = 5;
+ sm.w.locs[0][2].f = 10;
+ sm.w.locs[0][3].f = 10;
+ sm.w.locs[1][0].f = 4;
+ sm.w.locs[1][1].f = 6;
+ sm.w.locs[1][2].f = 10;
+ sm.w.locs[1][3].f = 0;
+ sm.w.locs[2][0].f = 0;
+ sm.w.locs[2][1].f = 3;
+ sm.w.locs[2][2].f = 7;
+ sm.w.locs[2][3].f = 0;
+ sm.w.locs[3][0].f = 0;
+ sm.w.locs[3][1].f = 0;
+ sm.w.locs[3][2].f = 8;
+ sm.w.locs[3][3].f = 9;
  intelTest_staticAnalysis(&sm, &res);
- if(res.totalAgents == 8
+ if(!(res.totalAgents == 8
    && res.energyDistribution[0] > -0.01 && res.energyDistribution[0] < 0.01
    && res.energyDistribution[1] > 0.019 && res.energyDistribution[1] < 0.021
    && res.energyDistribution[2] > 1.9   && res.energyDistribution[2] < 2.1
    && res.energyDistribution[3] > 5.9 && res.energyDistribution[3] < 6.1
-   && res.energyDistribution[4] > 7.9 && res.energyDistribution[4] < 8.1)
-   return 1;
- else
+   && res.energyDistribution[4] > 7.9 && res.energyDistribution[4] < 8.1)) {
+   printf("Failed intelTests agents number and energy distribution\n");
+   intelTests_printResults(&res);
    return 0;
+ }
+ if(!(res.worldFoodDistribution[0] > -0.01 && res.worldFoodDistribution[0] < 0.01 
+      && res.worldFoodDistribution[1] > -0.01 && res.worldFoodDistribution[1] < 0.01 
+      && res.worldFoodDistribution[2] > 5.99 && res.worldFoodDistribution[2] < 6.01
+      && res.worldFoodDistribution[3] > -9.9 && res.worldFoodDistribution[3] < 10.1 
+      && res.worldFoodDistribution[4] > -9.9 && res.worldFoodDistribution[4] < 10.1)) { 
+   printf("Failed intelTests world and agent food distribution\n"); 
+   intelTests_printResults(&res);
+   return 0;
+ }
+ return 1;
 }
 void intelTest_doObviouslyStupidThings(simulationManager *sm, intelligenceTestsResults *res)
 {;
