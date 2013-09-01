@@ -4,13 +4,6 @@
 #include "simulationManager_thread.c"
 #include "threadManager.c"
 #include <pthread.h>
-void simulationManager_setupThreads(simulationManager *sm);
-void simulationManager_cleanupThreads(simulationManager *sm);
-void simulationManager_seedAgents(simulationManager *sm);
-void simulationManager_runAgentDecisions(simulationManager *sm); //Single-threaded
-void simulationManager_runAgentActions(simulationManager *sm); //Multi-threaded
-void simulationManager_runIterations(simulationManager *sm, int iterations, int seedInterval, int seedDuration);
-void simulationManager_runIntelligenceTests(simulationManager *sm);
 void simulationManager_run(simulationManager *sm)
 {
  printf("Running simuation of the world\n");

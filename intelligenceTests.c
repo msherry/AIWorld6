@@ -142,7 +142,10 @@ void intelTest_doObviouslyStupidThings(simulationManager *sm, intelligenceTestsR
 {;
 }
 void intelTest_surviveNewEnvironment(simulationManager *sm, intelligenceTestsResults *res)
-{;
+{
+ world_makeRandomTerrain(&(sm->w));
+ simulationManager_runIterations(sm, 1000, 0, 0);
+ intelTest_staticAnalysis(sm,res);
 }
 void intelTest_survivePredator(simulationManager *sm, intelligenceTestsResults *res)
 {;
