@@ -38,3 +38,4 @@
 #define AG_CONN_END 5
 #define AG_CONN_IN 0
 #define AG_CONN_MID 1
+#define AG_INT_CONVERSION 0xFFFF

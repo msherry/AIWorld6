@@ -8,9 +8,9 @@ lvl 3 : outputs
 typedef struct brain
 {
  //Values
- float inputs[AG_INPUTS];
- float mids[AG_MID_NODES];
- float outputs[AG_OUTPUTS];
+ int inputs[AG_INPUTS]; //Multiply by AG_INT_CONVERSION to make these into ints on the way in
+ int mids[AG_MID_NODES];
+ int outputs[AG_OUTPUTS];
  //Connections
  int connsUsed;
  unsigned char lvl[AG_CONNS];

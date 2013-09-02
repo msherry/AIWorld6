@@ -14,6 +14,7 @@ simulationManager sm;
 #include "world.c"
 #include "threadManager.c"
 #include "intelligenceTests.c"
+#include "brain.c"
 #include "agent.c"
 #include "simulationManager.c"//includes simulationManager.h
 
@@ -54,7 +55,11 @@ void runTests()
  else
    printf("Failed: Static analysis tests\n");
  if(simulationManager_thread_test() == 1)
-   printf("Passed: Simulation Manager Thread\n");
+   printf("Passed: Simulation Manager Thread tests\n");
  else
-   printf("Failed: Simulation Manager Thread\n");
+   printf("Failed: Simulation Manager Thread tests\n");
+ if(brain_test() == 1)
+   printf("Passed: Brain tests\n");
+ else
+   printf("Failed: Brain tests\n");
 }
