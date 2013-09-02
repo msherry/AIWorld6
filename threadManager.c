@@ -10,6 +10,7 @@ void initThread(simulationManager_thread_control *tc, pthread_t *t, void *start_
  tc->runAgentAction = 0;
  tc->done = 0;
  tc->childNumber = cn;
+ tc->numberOfChildren = NUMBER_OF_THREADS;
  tc->childHasThisLock = 'a';
  tc->parentHasThisLock = 'b'; 
  tc->subRoutine = start_routine;

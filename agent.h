@@ -7,4 +7,5 @@ typedef struct agent
  float energy; 
 } agent; 
 
+void agent_makeDecision(agent *ag);
 #endif

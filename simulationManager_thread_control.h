@@ -1,10 +1,11 @@
 #ifndef simulationmanager_thread_info
 #define simulationmanager_thread_info
 typedef void (*functiontype)();
-
+struct simulationManager_thread_control;
+#include "simulationManager.h"
 typedef struct simulationManager_thread_control
 {
- int childNumber;
+ int childNumber, numberOfChildren;
  volatile int runAgentDecision;
  volatile int runAgentAction;
  volatile int done;

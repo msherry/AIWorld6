@@ -9,10 +9,13 @@
 #include "agent.h"
 #include "location.h"
 #include "world.h"//includes location.h
+simulationManager sm;
 #include "world.c"
 #include "threadManager.c"
 #include "intelligenceTests.c"
+#include "agent.c"
 #include "simulationManager.c"//includes simulationManager.h
+
 void runTests();
 void runSimulation();
 int main(int argc, char** argv)
@@ -29,15 +32,17 @@ int main(int argc, char** argv)
     runSimulation();
   }
 }
-
+//Having this top level class as external not only reduces how much we need to pass it around, it also prevents us from having to cross link it at the thread control class, which greatly reduces the #include fancy footwork
 void runSimulation()
 {
- simulationManager sm;
- simulationManager_run(&sm); 
+ printf("Running the simulation now!!!!!!!!\n");
+ simulationManager_run(); 
 }
 
 void runTests()
 {
+ world *w;
+ w = &(sm.w);
  if(threadManager_test() == 1)
    printf("Passed: Thread manager tests\n");
  else
@@ -46,4 +51,8 @@ void runTests()
    printf("Passed: Static analysis tests\n");
  else
    printf("Failed: Static analysis tests\n");
+ if(simulationManager_thread_test() == 1)
+   printf("Passed: Simulation Manager Thread\n");
+ else
+   printf("Failed: Simulation Manager Thread\n");
 }

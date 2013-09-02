@@ -2,26 +2,26 @@
 #define INTELLIGENCETESTS_C
 #include "simulationManager.h"
 #include "intelligenceTestsResults.h"
-void intelTest_staticAnalysis(simulationManager *sm, intelligenceTestsResults *res);
-void intelTest_doObviouslyStupidThings(simulationManager *sm, intelligenceTestsResults *res);
-void intelTest_surviveNewEnvironment(simulationManager *sm, intelligenceTestsResults *res);
-void intelTest_survivePredator(simulationManager *sm, intelligenceTestsResults *res);
-void intelTest_surviveBetterTogether(simulationManager *sm, intelligenceTestsResults *res);
-
-void runAllTests(simulationManager *sm, intelligenceTestsResults *res)
+void intelTest_staticAnalysis(intelligenceTestsResults *res);
+void intelTest_doObviouslyStupidThings(intelligenceTestsResults *res);
+void intelTest_surviveNewEnvironment(intelligenceTestsResults *res);
+void intelTest_survivePredator(intelligenceTestsResults *res);
+void intelTest_surviveBetterTogether(intelligenceTestsResults *res);
+extern simulationManager sm;
+void runAllTests(intelligenceTestsResults *res)
 {
  char *worldString;
- worldString = world_toString(&(sm->w));
- intelTest_staticAnalysis(sm,res);
- world_fromString(&(sm->w),worldString);
- intelTest_doObviouslyStupidThings(sm,res);
- world_fromString(&(sm->w),worldString);
- intelTest_surviveNewEnvironment(sm,res);
- world_fromString(&(sm->w),worldString);
- intelTest_survivePredator(sm,res);
- world_fromString(&(sm->w),worldString);
- intelTest_surviveBetterTogether(sm,res);
- world_fromString(&(sm->w),worldString);
+ worldString = world_toString(&(sm.w));
+ intelTest_staticAnalysis(res);
+ world_fromString(&(sm.w),worldString);
+ intelTest_doObviouslyStupidThings(res);
+ world_fromString(&(sm.w),worldString);
+ intelTest_surviveNewEnvironment(res);
+ world_fromString(&(sm.w),worldString);
+ intelTest_survivePredator(res);
+ world_fromString(&(sm.w),worldString);
+ intelTest_surviveBetterTogether(res);
+ world_fromString(&(sm.w),worldString);
 }
 //This is used for sorting arrays, because qsort doesn't have a default compare function
 int cmpfunc (const void * a, const void * b) {
@@ -36,10 +36,10 @@ int cmpfunc (const void * a, const void * b) {
   }
 }
 
-void intelTest_staticAnalysis(simulationManager *sm, intelligenceTestsResults *res)
+void intelTest_staticAnalysis(intelligenceTestsResults *res)
 {
  int i,j;
- int ws = sm->w.worldSize;
+ int ws = sm.w.worldSize;
  float listOfEnergy[ws*ws];
  float listOfFood[ws*ws];
  float listOfAgentsFood[ws*ws];
@@ -47,13 +47,13 @@ void intelTest_staticAnalysis(simulationManager *sm, intelligenceTestsResults *r
  for(i = 0; i < ws; i++) {
    for(j = 0; j < ws; j++) {
      //What is the food distribution on this world? (So we can compare to the the food distribution where they live) 
-     listOfFood[i*ws + j] = sm->w.locs[i][j].f;
-     if(sm->w.locs[i][j].a != NULL)
+     listOfFood[i*ws + j] = sm.w.locs[i][j].f;
+     if(sm.w.locs[i][j].a != NULL)
      {
        //How much energy do they have?
-       listOfEnergy[res->totalAgents] = sm->w.locs[i][j].a->energy;
+       listOfEnergy[res->totalAgents] = sm.w.locs[i][j].a->energy;
        //Are they living in all food areas or only some?
-       listOfAgentsFood[res->totalAgents] = sm->w.locs[i][j].f;
+       listOfAgentsFood[res->totalAgents] = sm.w.locs[i][j].f;
        //How many are there?
        res->totalAgents++;
      }
@@ -81,9 +81,12 @@ void intelTest_staticAnalysis(simulationManager *sm, intelligenceTestsResults *r
 }
 int intelTest_staticAnalysis_test()
 {
- simulationManager sm;
+ int i,j;
  intelligenceTestsResults res;
  agent ags[8];
+ for(i = 0; i < 4; i++)
+   for(j = 0; j < 4; j++)
+     sm.w.locs[i][j].a = NULL; //Clear it in case other tests are using the same world, after all it has the same simulation manager
  ags[0].energy = 2.0;
  ags[1].energy = 4.0;
  ags[2].energy = 6.0;
@@ -116,7 +119,7 @@ int intelTest_staticAnalysis_test()
  sm.w.locs[3][1].f = 0;
  sm.w.locs[3][2].f = 8;
  sm.w.locs[3][3].f = 9;
- intelTest_staticAnalysis(&sm, &res);
+ intelTest_staticAnalysis(&res);
  if(!(res.totalAgents == 8
    && res.energyDistribution[0] > -0.01 && res.energyDistribution[0] < 0.01
    && res.energyDistribution[1] > 0.019 && res.energyDistribution[1] < 0.021
@@ -138,19 +141,19 @@ int intelTest_staticAnalysis_test()
  }
  return 1;
 }
-void intelTest_doObviouslyStupidThings(simulationManager *sm, intelligenceTestsResults *res)
+void intelTest_doObviouslyStupidThings(intelligenceTestsResults *res)
 {;
 }
-void intelTest_surviveNewEnvironment(simulationManager *sm, intelligenceTestsResults *res)
+void intelTest_surviveNewEnvironment(intelligenceTestsResults *res)
 {
- world_makeRandomTerrain(&(sm->w));
- simulationManager_runIterations(sm, 1000, 0, 0);
- intelTest_staticAnalysis(sm,res);
+ world_makeRandomTerrain(&(sm.w));
+ simulationManager_runIterations(1000, 0, 0);
+ intelTest_staticAnalysis(res);
 }
-void intelTest_survivePredator(simulationManager *sm, intelligenceTestsResults *res)
+void intelTest_survivePredator(intelligenceTestsResults *res)
 {;
 }
-void intelTest_surviveBetterTogether(simulationManager *sm, intelligenceTestsResults *res)
+void intelTest_surviveBetterTogether(intelligenceTestsResults *res)
 {;
 }
 #endif
