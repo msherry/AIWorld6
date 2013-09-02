@@ -30,6 +30,12 @@ void simulationManager_thread_runDecisions(simulationManager_thread_control *tc,
   }
  }
 }
+
+
+//-------------------------------
+//    TESTS
+//-------------------------------
+
 void simulationManager_thread_test_decFunc(agent *ag) {
   static int agentsChecked = 0;
   agentsChecked++;

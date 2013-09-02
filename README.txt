@@ -34,19 +34,22 @@ This should be more like 'things I'd like to prove' - that these complexities be
 * Move and attack vs. move-attack
 * Move-only vs. move-attack
 * Changing climate
-* Give them language 
 * Take a set of agents from an evolved world, place them randomly on a new world vs. place them togethe on a new world
-* Given 1 hormone vs.0 vs. 5, how do agents perform? (do they benefit from having more, or even no conversation?)
+* Give them language...Given 1 hormone vs.0 vs. 5, how do agents perform? (do they benefit from having more, or even no conversation?)
+* Give them memory
+* Give them the ability to modify the environment
 
 IMPLEMENTATION: Agent senses
-* Can see far, but directional: only good vision in front.
-* Can see food values, can see passibility values, can see agents, can see 'hormone' values[triple pair] 
+* Can see food values (0 to 1 - Value you get from eating here)
+* Can see passibility values (0 to 1 - Cost of moving here (other creatures are a 2, and actually impassible))
+* Can see log of other agents' energy (0 to inifinity)
+* Can see 'hormone' values[triple pair] (-1 to 1)
  ---  3
 ----- 5
 ----- 5
---a-- 4
+--a-- 5
 ----- 5
-22 inputs per type
+23 inputs per type, 6 types = h
 
 IMPLEMENTATION: Agent actions
 * hormone set

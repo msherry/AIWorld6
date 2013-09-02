@@ -10,6 +10,7 @@
 #include "location.h"
 #include "world.h"//includes location.h
 simulationManager sm;
+#include "quickSigmoid.c"
 #include "world.c"
 #include "threadManager.c"
 #include "intelligenceTests.c"
@@ -20,6 +21,7 @@ void runTests();
 void runSimulation();
 int main(int argc, char** argv)
 {
+ quickSigmoid_init();
  if(argc != 2) //Assume we're running tests now
   runTests();
  else
