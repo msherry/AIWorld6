@@ -6,8 +6,9 @@
 typedef struct world
 {
  int worldSize;
- agent agents[WORLD_SIZE*WORLD_SIZE];
- int agentInUse[WORLD_SIZE*WORLD_SIZE];
+ int numbAgents;
+ agent agents[AG_TOTAL_ALLOWED];
+ int agentInUse[AG_TOTAL_ALLOWED];
  location locs[WORLD_SIZE][WORLD_SIZE];
 
 } world; 

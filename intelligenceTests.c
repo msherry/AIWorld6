@@ -40,9 +40,10 @@ void intelTest_staticAnalysis(intelligenceTestsResults *res)
 {
  int i,j;
  int ws = sm.w.worldSize;
- float listOfEnergy[ws*ws];
+ int na = sm.w.numbAgents;
+ float listOfAgentsEnergy[na];
  float listOfFood[ws*ws];
- float listOfAgentsFood[ws*ws];
+ float listOfAgentsFood[na];
  res->totalAgents = 0;
  for(i = 0; i < ws; i++) {
    for(j = 0; j < ws; j++) {
@@ -51,7 +52,7 @@ void intelTest_staticAnalysis(intelligenceTestsResults *res)
      if(sm.w.locs[i][j].a != NULL)
      {
        //How much energy do they have?
-       listOfEnergy[res->totalAgents] = sm.w.locs[i][j].a->energy;
+       listOfAgentsEnergy[res->totalAgents] = sm.w.locs[i][j].a->energy;
        //Are they living in all food areas or only some?
        listOfAgentsFood[res->totalAgents] = sm.w.locs[i][j].f;
        //How many are there?
@@ -60,12 +61,12 @@ void intelTest_staticAnalysis(intelligenceTestsResults *res)
      //---- Do they have similar DNA? ----
    }
  }
- qsort(listOfEnergy,res->totalAgents,sizeof(float),cmpfunc);
- res->energyDistribution[0] = listOfEnergy[0];
- res->energyDistribution[1] = listOfEnergy[res->totalAgents/4];
- res->energyDistribution[2] = listOfEnergy[res->totalAgents*2/4];
- res->energyDistribution[3] = listOfEnergy[res->totalAgents*3/4];
- res->energyDistribution[4] = listOfEnergy[res->totalAgents-1];
+ qsort(listOfAgentsEnergy,res->totalAgents,sizeof(float),cmpfunc);
+ res->energyDistribution[0] = listOfAgentsEnergy[0];
+ res->energyDistribution[1] = listOfAgentsEnergy[res->totalAgents/4];
+ res->energyDistribution[2] = listOfAgentsEnergy[res->totalAgents*2/4];
+ res->energyDistribution[3] = listOfAgentsEnergy[res->totalAgents*3/4];
+ res->energyDistribution[4] = listOfAgentsEnergy[res->totalAgents-1];
  qsort(listOfAgentsFood,res->totalAgents,sizeof(float),cmpfunc);
  qsort(listOfFood,ws*ws,sizeof(float),cmpfunc);
  res->agentFoodDistribution[0] = listOfAgentsFood[0];
@@ -95,6 +96,7 @@ int intelTest_staticAnalysis_test()
  ags[6].energy = 0.02;
  ags[7].energy = 1.0;
  sm.w.worldSize = 4;//For the sake of time and simplicity, only check a little of it
+ sm.w.numbAgents = 100;
  sm.w.locs[0][0].a = &ags[7];
  sm.w.locs[3][3].a = &ags[6];
  sm.w.locs[3][2].a = &ags[5];

@@ -62,4 +62,8 @@ void runTests()
    printf("Passed: Brain tests\n");
  else
    printf("Failed: Brain tests\n");
+ if(agent_test() == 1)
+   printf("Passed: Agent tests\n");
+ else
+   printf("Failed: Agent tests\n");
 }

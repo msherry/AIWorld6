@@ -8,6 +8,7 @@ void world_createFromScratch(world *w)
 {
  int x,y;
  w->worldSize = WORLD_SIZE;
+ w->numbAgents = AG_TOTAL_ALLOWED;
  for(x = 0; x < w->worldSize; x++) { 
    for(y = 0; y < w->worldSize; y++) {
      w->agentInUse[x*w->worldSize+y] = 0;

@@ -42,22 +42,43 @@ int brain_test()
  float o;
  brain br;
  br.inputs[0] = 1.0*AG_INT_CONVERSION;
- br.inputs[1] = 2.0*AG_INT_CONVERSION;
+ //Inputs over the limit are no longer possible, the mult will be below a number and the input will be below a number
+ br.inputs[1] = 0;//(0x7FFF+2)*AG_INT_CONVERSION;//This should be rtight over the limit
  br.inputs[2] = -1.0*AG_INT_CONVERSION;
- br.lvl[0] = AG_CONN_IN;
+ br.inputs[3] = 0;//(0x7FFF)*AG_INT_CONVERSION;//This should be at the limit, but will be multiplied
+ br.lvl[0] = AG_CONN_IN; //normal con
  br.in[0] = 0;
  br.out[0] = 2;
- br.multiplier[0] = 1;
- br.lvl[1] = AG_CONN_IN;
+ br.multiplier[0] = 1; 
+ br.lvl[1] = AG_CONN_IN;//normal con2
  br.in[1] = 2;
  br.out[1] = 2;
  br.multiplier[1] = -1;
- br.lvl[2] = AG_CONN_MID;
- br.in[2] = 2;
- br.out[2] = 1;//This is the final output
- br.multiplier[2] = 1.0;
- br.lvl[3] = AG_CONN_END;
+ br.lvl[2] = AG_CONN_IN; //limit con
+ br.in[2] = 1;
+ br.out[2] = 0;
+ br.multiplier[2] = 1;
+ br.lvl[3] = AG_CONN_IN;//limit multiplier con
+ br.in[3] = 3;
+ br.out[3] = 1;
+ br.multiplier[3] = 2;
+ br.lvl[4] = AG_CONN_MID;//normal con
+ br.in[4] = 2;
+ br.out[4] = 1;
+ br.multiplier[4] = 1.0;
+ br.lvl[5] = AG_CONN_MID;//limit con
+ br.in[5] = 0;
+ br.out[5] = 0;
+ br.multiplier[5] = 1.0;
+ br.lvl[6] = AG_CONN_MID;//limit mult con
+ br.in[6] = 1;
+ br.out[6] = 2;
+ br.multiplier[6] = 1.0;
+
+ br.lvl[7] = AG_CONN_END;
  brain_makeDecision(&br);
+ //printf("input over limit %f\n",br.outputs[0]/(float)AG_INT_CONVERSION);
+ //printf("mult over limit %f\n",br.outputs[2]/(float)AG_INT_CONVERSION);
  o = br.outputs[1]/(float)AG_INT_CONVERSION; 
  if(o > 0.7615 && o < 0.7616)
    return 1;

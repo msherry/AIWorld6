@@ -38,8 +38,8 @@ void simulationManager_runIterations(int iterations, int seedInterval, int seedD
  for(i = 0; i < iterations; i++) {
    if(i % seedInterval == 0 && i < seedDuration)
      simulationManager_seedAgents();
-   simulationManager_runAgentDecisions(); //Single-threaded
-   simulationManager_runAgentActions(); //Multi-threaded
+   simulationManager_runAgentDecisions(); //Multi-threaded
+   simulationManager_runAgentActions(); //Single-threaded
  } 
 }
 
@@ -57,19 +57,21 @@ void simulationManager_signalThreadsToGo() {
  }
 }
 
-void simulationManager_runAgentDecisions() { //Single-threaded
+void simulationManager_runAgentDecisions() {
  int i = 0;
  for(i = 0; i < NUMBER_OF_THREADS; i++) {
   sm.threadControls[i].runAgentDecision = 1; //The thread will turn it back to zero when done 
  }
- simulationManager_signalThreadsToGo(); 
+ simulationManager_signalThreadsToGo(); //Thread is also expected to gather inputs
 }
 void simulationManager_runAgentActions() { //Multi-threaded
- int i = 0;
- for(i = 0; i < NUMBER_OF_THREADS; i++) {
-  sm.threadControls[i].runAgentAction = 1; //The thread will turn it back to zero when done 
+ int i;
+  //printf("Did nothing to run agent actions\n");
+ for(i = 0; i < sm.w.numbAgents; i++) {
+  if(sm.w.agentInUse[i] == 1) {
+   ;
+  }
  }
- simulationManager_signalThreadsToGo(); 
 }
 
 void simulationManager_runIntelligenceTests() {

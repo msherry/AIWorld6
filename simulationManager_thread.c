@@ -3,13 +3,16 @@
 #include "simulationManager.h"
 extern simulationManager sm;
 void simulationManager_thread_runDecisions(simulationManager_thread_control *tc, functiontype decisionFunction);
+void simulationManager_thread_gatherInputs(simulationManager_thread_control *tc);
 void *simulationManager_thread_run(void *ptr) {
  simulationManager_thread_control* tc = (simulationManager_thread_control*)ptr; 
  printf("No work done by sim manager yet");
  while(tc->done == 0)
  {
   if(tc->runAgentDecision == 1) {
+    simulationManager_thread_runDecisions(tc,agent_gatherInputs);
     simulationManager_thread_runDecisions(tc,agent_makeDecision);
+    tc->runAgentDecision = 0;
   }
   else if (tc->runAgentAction == 1) {
   ; //For now the main thread will handle all actions
