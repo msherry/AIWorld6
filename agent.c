@@ -36,7 +36,85 @@ void agent_makeDecision(agent *ag) {
  }
 }
 
+agent* agent_mallocAgent(int x, int y, float e) {
+ agent *a;
+ a = world_mallocAgent(&(sm.w)); 
+ a->xLoc = x;
+ a->yLoc = y;
+ a->energy = e;
+ a->facingDirection = UP; 
+ return a;
+}
+void agent_mallocAgent_fromScratch(int x, int y, float e) {
+ agent *a; 
+ if(sm.w.locs[x][y].a != NULL)//Kill the agent if this one lands on them
+   sm.w.locs[x][y].a->energy = -1;//The general assumption is any agent with negative energy is dead
+ a = agent_mallocAgent(x,y,e);
+ brain_makeFromScratch(&(a->br));
+}
+agent* agent_mallocAgent_checkAndMake(agent *a) {
+ agent *newA; 
+ int i,j,x,y;
+ float e;
+ newA = NULL;
+ x = -1; //Look for a location nearby to put this agent in
+ for(i = -1; i < 2; i++) {
+  for(j = -1; j < 2; j++) {
+   if(sm.w.locs[a->xLoc+i][a->yLoc+j].a->energy < 0 && sm.w.locs[a->xLoc+i][a->yLoc+j].p > PASS_IMPASSIBLE) {
+    x = a->xLoc+i;
+    y = a->yLoc+j; 
+   } 
+  }
+ }  
+ if( x > 0 ) { //We did find a location to put it in 
+  e = a->energy/AG_REPLICATION_GIVE;
+  a->energy -= e - AG_REPLICATION_COST; //The cost of replication
+  newA = agent_mallocAgent(x,y,e);
+ }
+ return newA;
+}
+void agent_mallocAgent_fromAsex(agent *a) {
+ agent *newA = agent_mallocAgent_checkAndMake(a);
+ if(newA != NULL)
+  brain_makeFromAsex(&(newA->br),&(a->br));
+}
+void agent_mallocAgent_fromSex(agent *a, agent *b) {
+ agent *newA = agent_mallocAgent_checkAndMake(a);
+ if(newA != NULL)
+  brain_makeFromSex(&(newA->br),&(a->br),&(b->br));
+}
+
+int agent_test_mallocs();
+int agent_test_gatherInputs();
 int agent_test() {
+ if(agent_test_gatherInputs() == 0)
+    return 0;
+ if(agent_test_mallocs() == 0) {
+  printf("Failed: Agent mallocs\n");
+  return 0; 
+ }
+ return 1;
+}
+
+int agent_test_mallocs() {
+ int i;
+ for(i = 0; i < sm.w.numbAgents; i++) {
+  if(sm.w.agents[i].energy > 0) {
+   return 0; //No agents shoud have anything yet   
+  } 
+ } 
+ for(i = 0; i < sm.w.numbAgents; i++) {
+  agent_mallocAgent_fromScratch(i%sm.w.worldSize, (int)(i/sm.w.worldSize), 10);  
+ }
+ for(i = 0; i < sm.w.numbAgents; i++) {
+  if(sm.w.agents[i].energy < 0) {
+   return 0; //All agents should have things
+  }
+ } 
+ return 1;
+}
+
+int agent_test_gatherInputs() {
  int i,j;
  world *w;
  w = &(sm.w);

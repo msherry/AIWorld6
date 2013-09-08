@@ -19,4 +19,7 @@ typedef struct brain
  float multiplier[AG_CONNS];
 } brain; 
 
+void brain_makeFromScratch(brain *newB);
+void brain_makeFromAsex(brain *newB, brain *b);
+void brain_makeFromSex(brain *newB, brain *b, brain *c);
 #endif

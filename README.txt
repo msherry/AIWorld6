@@ -1,3 +1,15 @@
+
+-----------------------------------
+PROJECT MANAGEMENT
+-----------------------------------
+* Intelligence tests - DONE
+* Threading organization - DONE
+* Brain - Setup inputs - DONE
+* Brain - Run output - DONE
+* Brain - Replicate
+* Agent actions
+* Fix world's edges and agent creation so agents can't go there
+* Seeing functions
 -----------------------------------
 DESIGN
 -----------------------------------

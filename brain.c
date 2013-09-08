@@ -1,6 +1,7 @@
 #ifndef brain_c
 #define brain_c
 #include "brain.h"
+
 void brain_makeDecision(brain *br)
 {
  int i,j;
@@ -14,30 +15,68 @@ void brain_makeDecision(brain *br)
  out = br->out;
  lvl = br->lvl;
  multiplier = br->multiplier;
+
  for(j = 0; j < AG_MID_NODES; j++) {
   mids[j] = 0;
  } 
+
  i = 0;
+
  while(lvl[i] == AG_CONN_IN) {
   mids[out[i]] += ins[in[i]] * multiplier[i];
   i++;
  } //NOTE: The mutation script is expected to assure we don't have backward connections (mid to in, for exmaple)
+
  for(j = 0; j < AG_MID_NODES; j++) {
   mids[j] = quickSigmoid_Sigmoid(mids[j]);
  } 
+
  for(j = 0; j < AG_OUTPUTS; j++) {
   outs[j] = 0;
  } 
+
  while(lvl[i] == AG_CONN_MID) {
   outs[out[i]] += mids[in[i]] * multiplier[i]; 
   i++;
  }
+
  //NOTE: Only need to apply sigmoid to the signals
  for(j = AG_SIGNAL; j < (AG_SIGNAL+AG_SIGNAL_NUMB); j++) {
   outs[j] = quickSigmoid_Sigmoid(outs[j])/(float)AG_INT_CONVERSION;
  }
 }
-int brain_test()
+
+void brain_makeFromScratch(brain *newB) {
+ int i;
+ for(i = 0; i < AG_CONNS_INIT/2; i++) {
+  newB->lvl[i] = AG_CONN_IN;
+  newB->out[i] = rand() / (float)RAND_MAX * AG_MID_NODES;
+  newB->in[i] = rand() / (float)RAND_MAX * AG_INPUTS;
+ }
+ for(i = AG_CONNS_INIT/2; i < AG_CONNS_INIT; i++) {
+  newB->lvl[i] = AG_CONN_MID;
+  newB->out[i] = rand() / (float)RAND_MAX * AG_OUTPUTS;
+  newB->in[i] = rand() / (float)RAND_MAX * AG_MID_NODES;
+ }
+ newB->lvl[i] = AG_CONN_END;
+}
+
+void brain_makeFromAsex(brain *newB, brain *b) {
+ printf("Did nothing to make the a-sex brain\n");
+}
+
+void brain_makeFromSex(brain *newB, brain *b, brain *c) {
+ printf("Did nothing to make the brain have sex\n");
+}
+
+int brain_test() {
+ if (brain_test_makeDecision() == 0)
+  return 0;
+ else 
+  return 1;
+}
+
+int brain_test_makeDecision()
 {
  float o;
  brain br;

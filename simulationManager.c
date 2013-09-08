@@ -68,7 +68,7 @@ void simulationManager_runAgentActions() { //Multi-threaded
  int i;
   //printf("Did nothing to run agent actions\n");
  for(i = 0; i < sm.w.numbAgents; i++) {
-  if(sm.w.agentInUse[i] == 1) {
+  if(sm.w.agents[i].energy > 0) {
    ;
   }
  }
