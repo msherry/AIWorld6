@@ -13,10 +13,13 @@ typedef struct brain
  int outputs[AG_OUTPUTS];
  //Connections
  int connsUsed;
- unsigned char lvl[AG_CONNS];
- unsigned char in[AG_CONNS];
- unsigned char out[AG_CONNS];
- float multiplier[AG_CONNS];
+ unsigned char inL1[AG_CONNS_L1];
+ unsigned char outL1[AG_CONNS_L1];
+ unsigned char inL2[AG_CONNS_L2];
+ unsigned char outL2[AG_CONNS_L2];
+ float multL1[AG_CONNS_L1];
+ float multL2[AG_CONNS_L2];
+ float mutationRate;
 } brain; 
 
 void brain_makeFromScratch(brain *newB);

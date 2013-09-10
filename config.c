@@ -43,17 +43,19 @@
 #define AG_IN_AGENE 50
 #define AG_IN_SIGNAL 75
 
+#define AG_MUTATION_RATE 0.001
+
 #define AG_INPUT_MAX 0xFF
 //#define AG_INPUT_MIN -- No inputs are possible to be lower numbers
 #define AG_MULT_MAX 0x7F
 #define AG_MULT_MIN -0x7F
+#define AG_MULT_INIT_RANGE 0x2F
 
 #define AG_MID_NODES 100
 #define AG_CONNS_INIT 100
-#define AG_CONNS 1000
-#define AG_CONN_END 5
-#define AG_CONN_IN 0
-#define AG_CONN_MID 1
+#define AG_CONNS_L1 500
+#define AG_CONNS_L2 500
+#define AG_CONN_END 130
 #define AG_INT_CONVERSION 0xFFFF
 
 #define AG_REPLICATION_COST 1.0

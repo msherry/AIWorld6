@@ -15,7 +15,7 @@ void agent_gatherInputs(agent *ag) {
    if(tmpLoc->a->energy/10 > AG_INPUT_MAX)//Special case check to make sure the energy number isn't over the limits of the math
      ag->br.inputs[AG_IN_AGENE+i*5+j] = AG_INPUT_MAX*AG_INT_CONVERSION;
    else
-     ag->br.inputs[AG_IN_AGENE+i*5+j] = tmpLoc->a->energy/10*AG_INT_CONVERSION;  
+     ag->br.inputs[AG_IN_AGENE+i*5+j] = tmpLoc->a->energy/20*AG_INT_CONVERSION;  //Energy is reduced cuz its a big number ususally
    for(k = 0; k < AG_SIGNAL_NUMB; k++) {
     ag->br.inputs[AG_IN_SIGNAL+AG_INPUT_TYPE_SIZE*k+i*5+j] = tmpLoc->s[k]*AG_INT_CONVERSION;  
    }
