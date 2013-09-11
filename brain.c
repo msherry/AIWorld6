@@ -47,10 +47,9 @@ void brain_makeDecision(brain *br)
 //----------------------
 void brain_fillRestWithNoOps(unsigned char *in, unsigned char *out, int connMax, int i) {
  for( ; i < connMax && in[i] != AG_CONN_END; i++) {
- in[i] = AG_CONN_END;
+  in[i] = AG_CONN_END;
  }
 }
-void brain_makeConnLvlFromScratch(unsigned char *in, unsigned char inMax, unsigned char *out, unsigned char outMax, float *mult, float mutationRate, int connMax);
 void brain_makeFromScratch(brain *newB) {
  newB->mutationRate = AG_MUTATION_RATE;
  brain_makeConnLvlFromScratch(newB->inL1,AG_INPUTS,newB->outL1,AG_MID_NODES,newB->multL1,newB->mutationRate,AG_CONNS_L1);  
@@ -153,8 +152,167 @@ void brain_makeConnLvlFromSex(unsigned char *in, unsigned char inMax, unsigned c
 int brain_test() {
  if (brain_test_makeDecision() == 0)
   return 0; 
+ if (brain_test_seeding() == 0)
+  return 0;
+ if (brain_test_asex() == 0)
+  return 0;
+ if (brain_test_sex() == 0)
+  return 0;
  return 1;
 }
+
+int brain_test_seeding() {
+ //Make a simple brain and show that it can process and return a normal result
+ brain b;
+ brain_makeFromScratch(&b);
+ return brain_test_checkIfNormalish(&b);
+}
+int brain_test_checkIfNormalish(brain *b) {
+ int i;
+ float average;
+ for(i = 0; i < AG_INPUTS; i++) {
+  b->inputs[i] = i; 
+ }
+ brain_makeDecision(b);
+ for(i = 0; i < AG_OUTPUTS_DECISIONS; i++) {
+  average += b->outputs[i]/(float)AG_INT_CONVERSION;
+ }
+ if(average /(float)AG_OUTPUTS_DECISIONS > 0.5 || average /(float)AG_OUTPUTS_DECISIONS < -0.5) {
+  printf("Brain: Make from scratch failed average check with value of sum %f average %f\n",average,average/(float)AG_OUTPUTS_DECISIONS);
+  return 0; //It should be around zeroish
+ }
+ for(i = AG_SIGNAL; i < AG_SIGNAL+AG_SIGNAL_NUMB; i++) {
+  if(b->outputs[i]/(float)AG_INT_CONVERSION > 0.001) {
+   printf("Brain: Make from scratch failed signal check with %f\n",b->outputs[i]/(float)AG_INT_CONVERSION); 
+   return 0;
+  } 
+ }
+ return 1;
+}
+int brain_test_asex() {
+ brain b, newB;
+ int i;
+ brain_makeFromScratch(&b);
+ //Test that a zero mutation brain is still the same
+ b.mutationRate = 0;
+ brain_makeFromAsex(&newB,&b);
+ for(i = 0; i < AG_CONNS_L1 && newB.inL1[i] != AG_CONN_END; i++) {
+  if(newB.inL1[i] != b.inL1[i] || newB.outL1[i] != b.outL1[i] || (newB.multL1[i]- b.multL1[i] > 0.0001 || b.multL1[i]- newB.multL1[i] > 0.0001)) {
+   printf("Brain: Asexual replication test failed on L1 mismatch %i\n",i);
+   printf("%i,%i\t%i,%i\t%f,%f\n",newB.inL1[i],b.inL1[i],newB.outL1[i],b.outL1[i],newB.multL1[i],b.multL1[i]);
+   return 0; 
+  }
+ }
+ for(i = 0; i < AG_CONNS_L2 && newB.inL2[i] != AG_CONN_END; i++) {
+  if(newB.inL2[i] != b.inL2[i] || newB.outL2[i] != b.outL2[i] || (newB.multL2[i]- b.multL2[i] > 0.0001 || b.multL2[i]- newB.multL2[i] > 0.0001)) {
+   printf("Brain: Asexual replication test failed on L2 mismatch %i\n",i);
+   printf("%i,%i\t%i,%i\t%f,%f\n",newB.inL2[i],b.inL2[i],newB.outL2[i],b.outL2[i],newB.multL2[i],b.multL2[i]);
+   return 0; 
+  }
+ }
+ //Test that a high mutation brain does change
+ brain_makeFromScratch(&b);
+ b.mutationRate = 10;
+ brain_makeFromAsex(&newB,&b);
+ for(i = 0; i < AG_CONNS_L1 && newB.inL1[i] != AG_CONN_END; i++) {
+  if(newB.multL1[i] == b.multL1[i]) {
+   printf("Brain: Asexual replication test failed on L1 not changing in entry %i\n",i);
+   return 0; 
+  }
+ }
+ for(i = 0; i < AG_CONNS_L2 && newB.inL2[i] != AG_CONN_END; i++) {
+  if(newB.multL2[i] == b.multL2[i]) {
+   printf("Brain: Asexual replication test failed on L1 not changing in entry %i\n",i);
+   return 0; 
+  }
+ } 
+ i = AG_CONNS_INIT;
+ if(newB.inL2[i] == AG_CONN_END) {
+  printf("Brain: Asexual replication test failed to make another connection when it should have.\n");
+  printf("%i,%i\t%i,%i\t%f,%f\n",newB.inL2[i],b.inL2[i],newB.outL2[i],b.outL2[i],newB.multL2[i],b.multL2[i]);
+  return 0; 
+ }
+ //Test that a high mutation brain doesn't error out in some way and still appears normal
+ brain_makeFromScratch(&b);
+ b.mutationRate = 0.1;
+ for(i = 0; i < 10000; i++) {
+  brain_makeFromAsex(&newB,&b);
+  brain_makeFromAsex(&b,&newB);
+ }
+ if(brain_test_checkIfNormalish(&newB) != 1) {
+  printf("Brain: Asexual replication test of massively mutated brain appears abnormal when it should be normal.\n");
+  return 0; 
+ }
+ return 1;
+}
+
+int brain_test_sex() {
+ brain a, b, newB;
+ int i;
+ brain_makeFromScratch(&b);
+ brain_makeFromScratch(&a);
+ //Test that a zero mutation brain is still the same
+ b.mutationRate = 0;
+ a.mutationRate = 0;
+ brain_makeFromSex(&newB,&b,&a);
+ for(i = 0; i < AG_CONNS_L1 && newB.inL1[i] != AG_CONN_END; i++) {
+  if( (newB.inL1[i]  != b.inL1[i]  && newB.inL1[i]  != a.inL1[i])  || 
+      (newB.outL1[i] != b.outL1[i] && newB.outL1[i] != a.outL1[i]) ||
+      ( (newB.multL1[i]- b.multL1[i] > 0.0001 || b.multL1[i]- newB.multL1[i] > 0.0001) &&
+        (newB.multL1[i]- a.multL1[i] > 0.0001 || a.multL1[i]- newB.multL1[i] > 0.0001))) {
+   printf("Brain: Sexual replication test failed on L1 mismatch %i\n",i);
+   printf("%i,%i\t%i,%i\t%f,%f\n",newB.inL1[i],b.inL1[i],newB.outL1[i],b.outL1[i],newB.multL1[i],b.multL1[i]);
+   return 0; 
+  }
+ }
+ for(i = 0; i < AG_CONNS_L2 && newB.inL2[i] != AG_CONN_END; i++) {
+  if( (newB.inL2[i]  != b.inL2[i]  && newB.inL2[i]  != a.inL2[i])  || 
+      (newB.outL2[i] != b.outL2[i] && newB.outL2[i] != a.outL2[i]) ||
+      ( (newB.multL2[i]- b.multL2[i] > 0.0001 || b.multL2[i]- newB.multL2[i] > 0.0001) &&
+        (newB.multL2[i]- a.multL2[i] > 0.0001 || a.multL2[i]- newB.multL2[i] > 0.0001))) {
+   printf("Brain: Sexual replication test failed on L2 mismatch %i\n",i);
+   printf("%i,%i\t%i,%i\t%f,%f\n",newB.inL2[i],b.inL2[i],newB.outL2[i],b.outL2[i],newB.multL2[i],b.multL2[i]);
+   return 0; 
+  }
+ }
+ //Test that a high mutation brain does change
+ brain_makeFromScratch(&b);
+ brain_makeFromScratch(&a);
+ b.mutationRate = 10;
+ a.mutationRate = 10;
+ brain_makeFromSex(&newB,&b,&a);
+ for(i = 0; i < AG_CONNS_L1 && newB.inL1[i] != AG_CONN_END; i++) {
+  if(newB.multL1[i] == b.multL1[i] || newB.multL1[i] == a.multL1[i]) {
+   printf("Brain: Sexual replication test failed on L1 not changing in entry %i\n",i);
+   return 0; 
+  }
+ }
+ for(i = 0; i < AG_CONNS_L2 && newB.inL2[i] != AG_CONN_END; i++) {
+  if(newB.multL2[i] == b.multL2[i] || newB.multL2[i] == a.multL2[i]) {
+   printf("Brain: Sexual replication test failed on L2 not changing in entry %i\n",i);
+   return 0; 
+  }
+ } 
+ i = AG_CONNS_INIT;
+ if(newB.inL2[i] == AG_CONN_END) {
+  printf("Brain: Sexual replication test failed to make another connection when it should have.\n");
+  printf("%i,%i\t%i,%i\t%f,%f\n",newB.inL2[i],b.inL2[i],newB.outL2[i],b.outL2[i],newB.multL2[i],b.multL2[i]);
+  return 0; 
+ }
+ //Test that a high mutation brain doesn't error out in some way and still appears normal
+ brain_makeFromScratch(&b);
+ b.mutationRate = 0.1;
+ for(i = 0; i < 10000; i++) {
+  brain_makeFromSex(&newB,&b,&a);
+  brain_makeFromSex(&b,&newB,&a);
+ }
+ if(brain_test_checkIfNormalish(&newB) != 1) {
+  printf("Brain: Sexual replication test of massively mutated brain appears abnormal when it should be normal.\n");
+  return 0; 
+ }
+ return 1;
+}
+
 
 int brain_test_makeDecision()
 {

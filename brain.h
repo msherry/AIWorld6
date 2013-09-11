@@ -25,4 +25,10 @@ typedef struct brain
 void brain_makeFromScratch(brain *newB);
 void brain_makeFromAsex(brain *newB, brain *b);
 void brain_makeFromSex(brain *newB, brain *b, brain *c);
+//Seeding
+void brain_makeConnLvlFromScratch(unsigned char *in, unsigned char inMax, unsigned char *out, unsigned char outMax, float *mult, float mutationRate, int connMax);
+void brain_fillRestWithNoOps(unsigned char *in, unsigned char *out, int connMax, int i);
+void brain_makeConnLvlFromScratch(unsigned char *in, unsigned char inMax, unsigned char *out, unsigned char outMax, float *mult, float mutationRate, int connMax);
+
+
 #endif

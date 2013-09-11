@@ -24,7 +24,7 @@
 #define AG_R_R 10
 #define AG_GROW 11
 #define AG_SIGNAL 12
-#define AG_SIGNAL_NUMB 2
+#define AG_SIGNAL_NUMB 3
 #define AG_MEM 0
 #define AG_MEM_NUMB 0
 //Remmber, total options is 0-based
@@ -52,7 +52,7 @@
 #define AG_MULT_INIT_RANGE 0x2F
 
 #define AG_MID_NODES 100
-#define AG_CONNS_INIT 100
+#define AG_CONNS_INIT 90
 #define AG_CONNS_L1 500
 #define AG_CONNS_L2 500
 #define AG_CONN_END 130
