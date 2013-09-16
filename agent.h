@@ -3,7 +3,6 @@
 #include "brain.h"
 typedef struct agent
 {
- int nextDecision;
  int xLoc,yLoc; //Agent's location
  int id; //The location in the overall agent array, used only by world
  int facingDirection; //Agent's facing direction
@@ -13,4 +12,15 @@ typedef struct agent
 } agent; 
 
 void agent_makeDecision(agent *ag);
+void agent_mallocAgent_fromAsex(agent *a);
+void agent_mallocAgent_fromSex(agent *a, agent *b);
+void agent_M_F(agent *ag);
+void agent_M_L(agent *ag);
+void agent_M_R(agent *ag);
+void agent_T_L(agent *ag);
+void agent_T_R(agent *ag);
+void agent_A_F(agent *ag);
+void agent_R(agent *ag);
+void agent_R_F(agent *ag);
+void agent_GROW(agent *ag);
 #endif

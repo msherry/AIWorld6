@@ -1,10 +1,10 @@
 #ifndef brain_c
 #define brain_c
 #include "brain.h"
-
+#include <limits.h>
 void brain_makeDecision(brain *br)
 {
- int i;
+ int i,max;
  int *ins, *outs, *mids;
  float *multL1, *multL2;
  unsigned char *inL1, *outL1, *inL2, *outL2;
@@ -39,6 +39,13 @@ void brain_makeDecision(brain *br)
  //NOTE: Only need to apply sigmoid to the signals
  for(i = AG_SIGNAL; i < (AG_SIGNAL+AG_SIGNAL_NUMB); i++) {
   outs[i] = quickSigmoid_Sigmoid(outs[i])/(float)AG_INT_CONVERSION;
+ }
+ max = INT_MIN;
+ for(i = 0; i < AG_OUTPUTS_DECISIONS; i++) {
+  if(outs[i] > max) {
+   max = outs[i];
+   br->latestDecision; 
+  } 
  }
 }
 

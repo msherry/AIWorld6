@@ -4,38 +4,174 @@
 #include <stdio.h>
 #include "agent.h"
 extern simulationManager sm;
+
+void agent_kill(agent *ag) {
+ sm.w.locs[ag->xLoc][ag->yLoc].a = NULL;
+ ag->energy = -1;
+}
+
+//----------------------------
+// Inputs and decision making
+//----------------------------
 void agent_gatherInputs(agent *ag) {
  int i,j,k;
  location *tmpLoc;
  for(i = 0; i < 5; i++) {
   for(j = 0; j < 5; j++) {
-   tmpLoc = &(sm.w.locs[ag->xLoc-1+j][ag->yLoc-2+i]);
+   if(ag->facingDirection == DOWN)
+    tmpLoc = &(sm.w.locs[ag->xLoc-1+i][ag->yLoc-2+j]);
+   if(ag->facingDirection == UP)
+    tmpLoc = &(sm.w.locs[ag->xLoc+1-i][ag->yLoc+2-j]);
+   if(ag->facingDirection == LEFT)
+    tmpLoc = &(sm.w.locs[ag->xLoc-2+j][ag->yLoc+1-i]);
+   if(ag->facingDirection == RIGHT)
+    tmpLoc = &(sm.w.locs[ag->xLoc+2-j][ag->yLoc-1+i]);
    ag->br.inputs[AG_IN_FOOD+i*5+j]  = tmpLoc->f*AG_INT_CONVERSION;  
    ag->br.inputs[AG_IN_PASS+i*5+j]  = tmpLoc->p*AG_INT_CONVERSION;  
-   if(tmpLoc->a->energy/10 > AG_INPUT_MAX)//Special case check to make sure the energy number isn't over the limits of the math
-     ag->br.inputs[AG_IN_AGENE+i*5+j] = AG_INPUT_MAX*AG_INT_CONVERSION;
+   if(tmpLoc->a->energy/20 > AG_INPUT_MAX)//Special case check to make sure the energy number isn't over the limits of the math
+    ag->br.inputs[AG_IN_AGENE+i*5+j] = AG_INPUT_MAX*AG_INT_CONVERSION;
    else
-     ag->br.inputs[AG_IN_AGENE+i*5+j] = tmpLoc->a->energy/20*AG_INT_CONVERSION;  //Energy is reduced cuz its a big number ususally
+    ag->br.inputs[AG_IN_AGENE+i*5+j] = tmpLoc->a->energy/20*AG_INT_CONVERSION;  //Energy is reduced cuz its a big number ususally
    for(k = 0; k < AG_SIGNAL_NUMB; k++) {
     ag->br.inputs[AG_IN_SIGNAL+AG_INPUT_TYPE_SIZE*k+i*5+j] = tmpLoc->s[k]*AG_INT_CONVERSION;  
    }
   }
  }
 }
+
 void agent_makeDecision(agent *ag) {
- int i,decision;
- float maxValue = FLT_MIN;
- for(i = 0; i < AG_OUTPUTS_DECISIONS; i++) {
-  if(maxValue < ag->br.outputs[i]) {
-   maxValue = ag->br.outputs[i];
-   ag->nextDecision = i; 
-  }
- }
- for(i = 0; i < AG_SIGNAL_NUMB; i++) {
+ brain_makeDecision(&(ag->br));
+}
+ 
+void agent_performDecidedAction(agent *ag) {
+ int i;
+ for(i = 0; i < AG_SIGNAL_NUMB; i++) { //Perform the signals
   ag->signals[i] = ag->br.outputs[AG_SIGNAL+i];
  }
+ switch(ag->br.latestDecision) {//Each of these is it's own function because they're in the tight loop and every comparison statement counts
+  case(AG_M_F): agent_M_F(ag); break;
+  case(AG_M_L): agent_M_L(ag); break;
+  case(AG_M_R): agent_M_R(ag); break;
+  case(AG_T_L): agent_T_L(ag); break;
+  case(AG_T_R): agent_T_R(ag); break;
+  case(AG_A_F): agent_A_F(ag); break;
+  case(AG_R):   agent_R(ag);   break;
+  case(AG_R_F): agent_R_F(ag); break;
+  case(AG_GROW): agent_GROW(ag); break;
+ }
+}
+void agent_A_F(agent *ag) { //ATTACK
+ agent *otherAgent;
+ otherAgent = NULL;
+ ag->energy -= AG_ATTACK_COST;
+ switch(ag->facingDirection) {
+  case(UP):    otherAgent = sm.w.locs[ag->xLoc-1][ag->yLoc  ].a; break;
+  case(DOWN):  otherAgent = sm.w.locs[ag->xLoc+1][ag->yLoc  ].a; break; 
+  case(LEFT):  otherAgent = sm.w.locs[ag->xLoc  ][ag->yLoc-1].a; break;
+  case(RIGHT): otherAgent = sm.w.locs[ag->xLoc  ][ag->yLoc+1].a; break;
+ }
+ if(otherAgent != NULL) {
+  if(ag->energy * AG_ATTACK_RATE >= otherAgent->energy) {
+   ag->energy += otherAgent->energy * AG_ATTACK_EFF;
+   agent_kill(otherAgent);
+  }
+  else {
+   ag->energy += otherAgent->energy * AG_ATTACK_RATE * AG_ATTACK_EFF -0.0001;
+   otherAgent->energy -= ag->energy * AG_ATTACK_RATE + 0.0001; 
+  }
+ } 
+}
+void agent_M(agent *ag, location *newLoc) {
+ ag->energy -= AG_MOVE_COST;
+ if(newLoc->a == NULL) {
+  if(newLoc->p > 0) {
+   newLoc->a = ag;
+   ag->energy -= newLoc->p;
+  }
+ }
+}
+void agent_M_F(agent *ag) { //MOVE
+ location *newLoc;
+ switch(ag->facingDirection) {
+  case(UP):    newLoc = &(sm.w.locs[ag->xLoc-1][ag->yLoc  ]); break;
+  case(DOWN):  newLoc = &(sm.w.locs[ag->xLoc+1][ag->yLoc  ]); break; 
+  case(LEFT):  newLoc = &(sm.w.locs[ag->xLoc  ][ag->yLoc-1]); break;
+  case(RIGHT): newLoc = &(sm.w.locs[ag->xLoc  ][ag->yLoc+1]); break;
+ }
+ agent_M(ag,newLoc);
+}
+void agent_M_L(agent *ag) {
+ location *newLoc;
+ switch(ag->facingDirection) {
+  case(UP):    newLoc = &(sm.w.locs[ag->xLoc  ][ag->yLoc-1]); break;
+  case(DOWN):  newLoc = &(sm.w.locs[ag->xLoc  ][ag->yLoc+1]); break; 
+  case(LEFT):  newLoc = &(sm.w.locs[ag->xLoc+1][ag->yLoc  ]); break;
+  case(RIGHT): newLoc = &(sm.w.locs[ag->xLoc-1][ag->yLoc  ]); break;
+ }
+ agent_M(ag,newLoc);
+}
+void agent_M_R(agent *ag) {
+ location *newLoc;
+ switch(ag->facingDirection) {
+  case(UP):    newLoc = &(sm.w.locs[ag->xLoc  ][ag->yLoc+1]); break;
+  case(DOWN):  newLoc = &(sm.w.locs[ag->xLoc  ][ag->yLoc-1]); break; 
+  case(LEFT):  newLoc = &(sm.w.locs[ag->xLoc-1][ag->yLoc  ]); break;
+  case(RIGHT): newLoc = &(sm.w.locs[ag->xLoc+1][ag->yLoc  ]); break;
+ }
+ agent_M(ag,newLoc);
+}
+void agent_T_R(agent *ag) { //TURN
+ ag->energy -= AG_TURN_COST;
+ switch(ag->facingDirection) {
+  case(UP):    ag->facingDirection = RIGHT; break;
+  case(DOWN):  ag->facingDirection = LEFT;  break;
+  case(LEFT):  ag->facingDirection = UP;    break;
+  case(RIGHT): ag->facingDirection = DOWN;  break;
+ }
+}
+void agent_T_L(agent *ag) {
+ ag->energy -= AG_TURN_COST;
+ switch(ag->facingDirection) {
+  case(UP):    ag->facingDirection = LEFT;  break;
+  case(DOWN):  ag->facingDirection = RIGHT; break;
+  case(LEFT):  ag->facingDirection = DOWN;  break;
+  case(RIGHT): ag->facingDirection = UP;    break;
+ }
+}
+void agent_R(agent* ag) {
+ ag->energy -= AG_REPLICATION_COST; 
+ agent_mallocAgent_fromAsex(ag);
+}
+void agent_R_F(agent* ag) {
+ agent* otherAg;
+ ag->energy -= AG_REPLICATION_COST;
+ switch(ag->facingDirection) {
+  case(UP):    otherAg = sm.w.locs[ag->xLoc-1][ag->yLoc  ].a; break;
+  case(DOWN):  otherAg = sm.w.locs[ag->xLoc+1][ag->yLoc  ].a; break; 
+  case(LEFT):  otherAg = sm.w.locs[ag->xLoc  ][ag->yLoc-1].a; break;
+  case(RIGHT): otherAg = sm.w.locs[ag->xLoc  ][ag->yLoc+1].a; break;
+ }
+ if(otherAg != NULL) {
+  agent_mallocAgent_fromSex(ag,otherAg); //Costing is done in that function
+ }
+}
+void agent_GROW(agent *ag) {
+ int i,j;
+ for(i = -1; i <= 1; i++) {
+  for(j = -1; j <= 1; j++) {
+   if(sm.w.locs[ag->xLoc+i][ag->yLoc+j].a != NULL && (i != 0 && j != 0)) { //If found agent, and not at the origin
+    ag->energy += AG_GROW_COST;
+    return; 
+   }
+  }
+ }
+ ag->energy += AG_GROW_RATE * sm.w.locs[ag->xLoc][ag->yLoc].f;
 }
 
+
+//---------------------------------------
+// Creation and reproduction
+//---------------------------------------
 agent* agent_mallocAgent(int x, int y, float e) {
  agent *a;
  a = world_mallocAgent(&(sm.w)); 
@@ -68,7 +204,6 @@ agent* agent_mallocAgent_checkAndMake(agent *a) {
  }  
  if( x > 0 ) { //We did find a location to put it in 
   e = a->energy/AG_REPLICATION_GIVE;
-  a->energy -= e - AG_REPLICATION_COST; //The cost of replication
   newA = agent_mallocAgent(x,y,e);
  }
  return newA;
@@ -84,6 +219,9 @@ void agent_mallocAgent_fromSex(agent *a, agent *b) {
   brain_makeFromSex(&(newA->br),&(a->br),&(b->br));
 }
 
+//----------
+// TESTING
+//----------
 int agent_test_mallocs();
 int agent_test_gatherInputs();
 int agent_test() {
@@ -126,6 +264,7 @@ int agent_test_gatherInputs() {
    w->locs[i][j].p = 100+10.0*(float)i+(float)j;
    
    w->locs[i][j].a = &(as[i*7+j]);
+   w->locs[i][j].a->facingDirection = DOWN;
    w->locs[i][j].a->energy = 100000.0+10.0*(float)i+(float)j;
    w->locs[i][j].a->xLoc = i;
    w->locs[i][j].a->yLoc = j;
@@ -144,14 +283,14 @@ int agent_test_gatherInputs() {
   }
  }
  for(i = 0; i < 5; i++) { //Test some foods
-   if(a->br.inputs[AG_IN_FOOD+5+i]/AG_INT_CONVERSION != i*10+12) {
+   if(a->br.inputs[AG_IN_FOOD+5+i]/AG_INT_CONVERSION != i*1+21) {
      printf("Failed: Agent: food mapping to input was bad. wanted %i, got %i\n",i*10+12,a->br.inputs[AG_IN_FOOD+5+i]/AG_INT_CONVERSION);
      return 0;
   }
  }
  for(i = 0; i < 5; i++) { //Test some movements
-   if(a->br.inputs[AG_IN_PASS+10+i]/AG_INT_CONVERSION != i*10+113) {
-     printf("Failed: Agent: pass mapping to input was bad. wanted %i, got %i\n",i*10+113,a->br.inputs[AG_IN_PASS+10+i]/AG_INT_CONVERSION);
+   if(a->br.inputs[AG_IN_PASS+i*5+2]/AG_INT_CONVERSION != i*10+113) {
+     printf("Failed: Agent: pass mapping to input was bad. wanted %i, got %i\n",i*10+113,a->br.inputs[AG_IN_PASS+i*5+2]/AG_INT_CONVERSION);
      return 0;
   }
  }
@@ -162,21 +301,37 @@ int agent_test_gatherInputs() {
   }
  }
  for(i = 0; i < 5; i++) { //Test some signal
-   if(a->br.inputs[AG_IN_SIGNAL+i]/AG_INT_CONVERSION != i*10+211) {
+   if(a->br.inputs[AG_IN_SIGNAL+i]/AG_INT_CONVERSION != i+211) {
      printf("Failed: Agent: signal mapping to input was bad.\n");
      return 0;
   }
  }
  if(AG_SIGNAL_NUMB > 1) {
- for(i = 0; i < 5; i++) { //Test some extra signal
-   if(a->br.inputs[AG_IN_SIGNAL+AG_INPUT_TYPE_SIZE+i]/AG_INT_CONVERSION != i*10+111) {
-     printf("Failed: Agent: signal mapping to input was bad. Wanted %i but got %i \n",i*10+311,a->br.inputs[AG_IN_SIGNAL+AG_INPUT_TYPE_SIZE+i]/AG_INT_CONVERSION);
+  for(i = 0; i < 5; i++) { //Test some extra signal
+   if(a->br.inputs[AG_IN_SIGNAL+AG_INPUT_TYPE_SIZE+i]/AG_INT_CONVERSION != i+111) {
+     printf("Failed: Agent: signal mapping to input was bad. Wanted %i but got %i \n",i+111,a->br.inputs[AG_IN_SIGNAL+AG_INPUT_TYPE_SIZE+i]/AG_INT_CONVERSION);
+     return 0;
+   }
+  }
+ }
+ a->facingDirection = RIGHT; 
+ agent_gatherInputs(a);
+ for(i = 0; i < 5; i++) { //Test some signal
+   if(a->br.inputs[AG_IN_SIGNAL+AG_INPUT_TYPE_SIZE+i+10]/AG_INT_CONVERSION != -10*i+144) {
+     printf("Failed: Agent: Facing right, signal mapping to input was bad. Wanted %i but got %i \n",-10*i+144,a->br.inputs[AG_IN_SIGNAL+AG_INPUT_TYPE_SIZE+i+10]/AG_INT_CONVERSION);
      return 0;
   }
  }
+ a->facingDirection = LEFT; 
+ agent_gatherInputs(a);
+ for(i = 0; i < 5; i++) { //Test some signal
+   if(a->br.inputs[AG_IN_SIGNAL+AG_INPUT_TYPE_SIZE+i+10]/AG_INT_CONVERSION != 10*i+102) {
+     printf("Failed: Agent: Facing right, signal mapping to input was bad. Wanted %i but got %i \n",10*i+102,a->br.inputs[AG_IN_SIGNAL+AG_INPUT_TYPE_SIZE+i+10]/AG_INT_CONVERSION);
+     return 0;
+  }
  }
- /*
- printf("foods:");
+
+/* printf("foods:");
  for(i = 1; i < 6; i++) {
   for(j = 1; j < 6; j++) {
    printf("\t%i,%i:%i",i,j,(int)w->locs[i][j].s[1]);

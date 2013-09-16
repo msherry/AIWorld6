@@ -20,6 +20,7 @@ typedef struct brain
  float multL1[AG_CONNS_L1];
  float multL2[AG_CONNS_L2];
  float mutationRate;
+ unsigned char latestDecision;
 } brain; 
 
 void brain_makeFromScratch(brain *newB);

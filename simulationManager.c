@@ -57,19 +57,22 @@ void simulationManager_signalThreadsToGo() {
  }
 }
 
-void simulationManager_runAgentDecisions() {
+void simulationManager_runAgentDecisions() { //Multi-threaded
  int i = 0;
  for(i = 0; i < NUMBER_OF_THREADS; i++) {
   sm.threadControls[i].runAgentDecision = 1; //The thread will turn it back to zero when done 
  }
  simulationManager_signalThreadsToGo(); //Thread is also expected to gather inputs
 }
-void simulationManager_runAgentActions() { //Multi-threaded
+void simulationManager_runAgentActions() { //Single threaded
  int i;
   //printf("Did nothing to run agent actions\n");
  for(i = 0; i < sm.w.numbAgents; i++) {
   if(sm.w.agents[i].energy > 0) {
-   ;
+   agent_performDecidedAction(sm.w.agents + i);
+  }
+  else {
+   agent_kill(sm.w.agents + i);
   }
  }
 }

@@ -6,30 +6,38 @@
 
 #define PASS_IMPASSIBLE_INIT -1
 #define PASS_IMPASSIBLE -1
- 
+
+#define AG_ATTACK_RATE 0.1
+#define AG_ATTACK_EFF 0.5
+#define AG_ATTACK_COST 1
+#define AG_TURN_COST 0.1
+#define AG_MOVE_COST 0.1
+#define AG_GROW_RATE 1
+#define AG_GROW_COST 0.3
+#define AG_REPLICATION_COST 1.0
+#define AG_REPLICATION_GIVE 3.0
+
+
 #define AG_TOTAL_ALLOWED 10000
 //Outputs from the brain
-#define AG_OUTPUTS 15
-#define AG_OUTPUTS_DECISIONS 12
+#define AG_OUTPUTS 11
+#define AG_OUTPUTS_DECISIONS 9
 #define AG_M_F 0 
 #define AG_M_L 1
 #define AG_M_R 2
 #define AG_T_L 3
 #define AG_T_R 4
 #define AG_A_F 5
-#define AG_A_L 6
-#define AG_A_R 7
-#define AG_R_F 8
-#define AG_R_L 9
-#define AG_R_R 10
-#define AG_GROW 11
-#define AG_SIGNAL 12
+#define AG_R   6
+#define AG_R_F 7
+#define AG_GROW 8
+#define AG_SIGNAL 9
 #define AG_SIGNAL_NUMB 3
 #define AG_MEM 0
 #define AG_MEM_NUMB 0
 //Remmber, total options is 0-based
 
-//Inputs to the brain
+//Inputs to the brain - facing down
 //  -----> Y axis
 //|  0  1  2  3  4
 //|  5  6  7  8  9  --Agent is at location 7
@@ -57,9 +65,6 @@
 #define AG_CONNS_L2 500
 #define AG_CONN_END 130
 #define AG_INT_CONVERSION 0xFFFF
-
-#define AG_REPLICATION_COST 1.0
-#define AG_REPLICATION_GIVE 3.0
 
 #define UP 0
 #define RIGHT 1
