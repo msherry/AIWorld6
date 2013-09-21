@@ -3,26 +3,23 @@
 #include "simulationManager.h"
 #include "simulationManager_thread.c"
 #include "threadManager.c"
+#include "simulationMonitor.c"
 #include <pthread.h>
 extern simulationManager sm;
 void simulationManager_run()
 {
- printf("Running simuation of the world\n");
  //Load world, run all agent decisions, then act on all agent decisions, then do statistics gathering on this turn, then when it's all done do assessments
-
  world_createFromScratch(&(sm.w));
  simulationManager_setupThreads();
  simulationManager_runIterations(WORLD_ITERATIONS,SEED_INTERVAL,SEED_DURATION);
  simulationManager_runIntelligenceTests();
  simulationManager_cleanupThreads();
 }
-
 void simulationManager_setupThreads() {
  int i;
  for(i = 0; i < NUMBER_OF_THREADS; i++) {
    initThread(&(sm.threadControls[i]), &(sm.threads[i]), simulationManager_thread_run,i);
  }
-
 }
 void simulationManager_cleanupThreads() {
  int i;
@@ -36,15 +33,24 @@ void simulationManager_cleanupThreads() {
 void simulationManager_runIterations(int iterations, int seedInterval, int seedDuration) {
  int i;
  for(i = 0; i < iterations; i++) {
-   if(i % seedInterval == 0 && i < seedDuration)
-     simulationManager_seedAgents();
-   simulationManager_runAgentDecisions(); //Multi-threaded
-   simulationManager_runAgentActions(); //Single-threaded
+  if(i % SIM_REPORT_INTERVAL == 0) {
+   printf("Sim has performed %i intervals\n",i);
+   simulationMonitor_emitMonitors();
+  } 
+  if(i % seedInterval == 0 && i < seedDuration)
+   simulationManager_seedAgents();
+  simulationManager_runAgentDecisions(); //Multi-threaded
+  simulationManager_runAgentActions(); //Single-threaded
  } 
 }
 
 void simulationManager_seedAgents() { 
- printf("Did nothing to seed agents\n");
+ int i,j;
+ for(i = WORLD_BORDER; i < 30; i += 2) {
+  for(j = WORLD_BORDER; j < 30; j += 2) {
+   agent_mallocAgent_fromScratch(i,j,SEED_ENERGY);
+  }
+ } 
 }
 
 void simulationManager_signalThreadsToGo() {

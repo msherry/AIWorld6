@@ -6,6 +6,7 @@
 typedef struct world
 {
  int worldSize;
+ int worldBorder;
  int numbAgents;
  agent agents[AG_TOTAL_ALLOWED];
  location locs[WORLD_SIZE][WORLD_SIZE];

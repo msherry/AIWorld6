@@ -1,8 +1,11 @@
 #define NUMBER_OF_THREADS 4
 #define WORLD_SIZE 100
-#define WORLD_ITERATIONS 100
+#define WORLD_ITERATIONS 1000
+#define SIM_REPORT_INTERVAL 100
+#define WORLD_BORDER 3
 #define SEED_INTERVAL 10
 #define SEED_DURATION 1000 
+#define SEED_ENERGY 100
 
 #define PASS_IMPASSIBLE_INIT -1
 #define PASS_IMPASSIBLE -1
@@ -70,3 +73,6 @@
 #define RIGHT 1
 #define DOWN 2
 #define LEFT 3
+
+#define MONITOR_FILE "./outputs/monitor.txt"
+#define WORLD_FILE "./outputs/world.txt"

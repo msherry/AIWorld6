@@ -1,5 +1,6 @@
 #ifndef world_c
 #define world_c
+#include <stdio.h>
 #include <stdlib.h>
 #include "world.h"
 
@@ -8,6 +9,7 @@ void world_createFromScratch(world *w)
 {
  int x,y;
  w->worldSize = WORLD_SIZE;
+ w->worldBorder = WORLD_BORDER;
  w->numbAgents = AG_TOTAL_ALLOWED;
  for(x = 0; x < w->worldSize; x++) { 
    for(y = 0; y < w->worldSize; y++) {
@@ -22,19 +24,27 @@ void world_makeRandomTerrain(world *w)
 {
  int x,y;
  for(x = 0; x < w->worldSize; x++) {
-   for(y = 0; y < w->worldSize; y++) {
-     w->locs[x][y].f = rand() / (float)RAND_MAX;
-     w->locs[x][y].p = rand() / (float)RAND_MAX * 2.0;
-   } 
+  for(y = 0; y < w->worldSize; y++) {
+   w->locs[x][y].f = rand() / (float)RAND_MAX;
+   w->locs[x][y].p = rand() / (float)RAND_MAX * 2.0;
+   if(x < w->worldBorder || y < w->worldBorder || x >= (w->worldSize - w->worldBorder) || y >= (w->worldSize - w->worldBorder)) {
+    w->locs[x][y].p = PASS_IMPASSIBLE;
+   }
+  } 
  }
 }
 
-char *world_toString(world *w)
+void world_save(world *w)
 {
- printf("did nothing to save world\n");
- return "none";
+ int i; 
+ FILE *outFile;
+ fopen(WORLD_FILE,"w");
+ for(i = 0; i < w->numbAgents; i++) {
+  ; //agent_save(outFile,w->agents + i);
+ }
+ fclose(outFile); 
 }
-void world_fromString(world *w, char *st)
+void world_load(world *w)
 {
  printf("did nothing to load the world\n");
 }

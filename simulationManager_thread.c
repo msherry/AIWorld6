@@ -6,7 +6,6 @@ void simulationManager_thread_runDecisions(simulationManager_thread_control *tc,
 void simulationManager_thread_gatherInputs(simulationManager_thread_control *tc);
 void *simulationManager_thread_run(void *ptr) {
  simulationManager_thread_control* tc = (simulationManager_thread_control*)ptr; 
- printf("No work done by sim manager yet");
  while(tc->done == 0)
  {
   if(tc->runAgentDecision == 1) {
@@ -33,12 +32,9 @@ void simulationManager_thread_runDecisions(simulationManager_thread_control *tc,
   }
  }
 }
-
-
 //-------------------------------
 //    TESTS
 //-------------------------------
-
 void simulationManager_thread_test_decFunc(agent *ag) {
   static int agentsChecked = 0;
   agentsChecked++;

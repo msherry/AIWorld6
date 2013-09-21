@@ -10,18 +10,17 @@ void intelTest_surviveBetterTogether(intelligenceTestsResults *res);
 extern simulationManager sm;
 void runAllTests(intelligenceTestsResults *res)
 {
- char *worldString;
- worldString = world_toString(&(sm.w));
+ world_save(&(sm.w));
  intelTest_staticAnalysis(res);
- world_fromString(&(sm.w),worldString);
+ world_load(&(sm.w));
  intelTest_doObviouslyStupidThings(res);
- world_fromString(&(sm.w),worldString);
+ world_load(&(sm.w));
  intelTest_surviveNewEnvironment(res);
- world_fromString(&(sm.w),worldString);
+ world_load(&(sm.w));
  intelTest_survivePredator(res);
- world_fromString(&(sm.w),worldString);
+ world_load(&(sm.w));
  intelTest_surviveBetterTogether(res);
- world_fromString(&(sm.w),worldString);
+ world_load(&(sm.w));
 }
 //This is used for sorting arrays, because qsort doesn't have a default compare function
 int cmpfunc (const void * a, const void * b) {
