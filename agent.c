@@ -16,6 +16,7 @@ void agent_kill(agent *ag) {
 void agent_gatherInputs(agent *ag) {
  int i,j,k;
  location *tmpLoc;
+ ag->br.inputs[AG_IN_RAND] = rand() / (float)RAND_MAX;
  for(i = 0; i < 5; i++) {
   for(j = 0; j < 5; j++) {
    if(ag->facingDirection == DOWN)//Set the location we're talking about here

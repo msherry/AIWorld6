@@ -1,5 +1,6 @@
 #ifndef SIMULATIONMANAGER_C
 #define SIMULATIONMANAGER_C 
+#include <time.h>
 #include "simulationManager.h"
 #include "simulationManager_thread.c"
 #include "threadManager.c"
@@ -15,6 +16,8 @@ void simulationManager_run()
  simulationManager_runIntelligenceTests();
  simulationManager_cleanupThreads();
 }
+
+
 void simulationManager_setupThreads() {
  int i;
  for(i = 0; i < NUMBER_OF_THREADS; i++) {
@@ -31,16 +34,36 @@ void simulationManager_cleanupThreads() {
 }
 
 void simulationManager_runIterations(int iterations, int seedInterval, int seedDuration) {
- int i;
- for(i = 0; i < iterations; i++) {
-  if(i % SIM_REPORT_INTERVAL == 0) {
-   printf("Sim has performed %i intervals\n",i);
+ clock_t timerA, timerB, timerDecision, timerAction, timerSeed;
+ double ms, decisionMS, actionMS, seedMS;
+ sm.i = 0;
+ timerA = clock();
+ for(; sm.i < iterations; sm.i++) {
+  if(sm.i % SIM_REPORT_INTERVAL == 0) {
+   //printf("Sim has performed %i intervals\n",i);
+   timerB = clock(); 
+   ms = timerB - timerA;
+   timerA = clock();
+   sm.speed = SIM_REPORT_INTERVAL/(ms/(float)CLOCKS_PER_SEC);
+   sm.speedDecision = (decisionMS/(float)CLOCKS_PER_SEC);
+   sm.speedAction = (actionMS/(float)CLOCKS_PER_SEC);
+   sm.speedSeed = (seedMS/(float)CLOCKS_PER_SEC);
    simulationMonitor_emitMonitors();
+   seedMS = 0;
+   actionMS = 0;
+   decisionMS = 0;
   } 
-  if(i % seedInterval == 0 && i < seedDuration)
+  if(sm.i % seedInterval == 0 && sm.i < seedDuration) {
+   timerSeed = clock(); 
    simulationManager_seedAgents();
+   seedMS += clock() - timerSeed;
+  }
+  timerDecision = clock();
   simulationManager_runAgentDecisions(); //Multi-threaded
+  decisionMS += clock() - timerDecision;
+  timerAction = clock();
   simulationManager_runAgentActions(); //Single-threaded
+  actionMS += clock() - timerAction;
  } 
 }
 
