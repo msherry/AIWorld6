@@ -10,7 +10,7 @@ typedef struct world
  int numbAgents;
  agent agents[AG_TOTAL_ALLOWED];
  location locs[WORLD_SIZE][WORLD_SIZE];
-
+ char whichFileToUse;//This is used to output to either file A or B so that anything reading while it's running sees a full file instead of a partially written one
 } world; 
 
 void world_setupAgentList(world *w);

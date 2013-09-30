@@ -1,0 +1,13 @@
+agents:0
+iterations:0
+aveE:-nan
+speed:inf
+speedD:0.000000
+speedA:0.000000
+speedS:0.000000
+moves:0
+turns:0
+attacks:0
+grows:0
+replications:0
+killedBySeed:0

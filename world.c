@@ -38,13 +38,26 @@ void world_save(world *w)
 {
  int i; 
  FILE *outFile;
- outFile = fopen(WORLD_FILE,"w");
+ if(w->whichFileToUse == 'a') //We have two files and switch between them so the reader can read a compete file in real time.
+  outFile = fopen(WORLD_FILE_LOC_B,"w");
+ else
+  outFile = fopen(WORLD_FILE_LOC_A,"w");
  for(i = 0; i < w->numbAgents; i++) {
   if(w->agents[i].energy > 0) {
    agent_save(w->agents + i, outFile);
   }
  }
  fclose(outFile); 
+ outFile = fopen(WORLD_WHICH_FILE_TO_USE_FILE_LOC, "w");
+ if(w->whichFileToUse == 'a'){ 
+  fprintf(outFile,"b");
+  w->whichFileToUse = 'b';
+ }
+ else {
+  fprintf(outFile,"a");
+  w->whichFileToUse = 'a';
+ }
+ fclose(outFile);
 }
 void world_load(world *w)
 {

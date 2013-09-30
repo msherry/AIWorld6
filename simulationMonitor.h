@@ -5,6 +5,7 @@ typedef struct simulationMonitor
  int moves, turns, attacks, grows, replications;
  double speed, speedDecision, speedAction, speedSeed;
  int killedBySeeding;
+ char whichFileToUse;
 } simulationMonitor; 
 
 void simulationMonitor_emitMonitors();

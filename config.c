@@ -80,5 +80,9 @@
 #define DOWN 2
 #define LEFT 3
 
-#define MONITOR_FILE "./outputs/monitor.txt"
-#define WORLD_FILE "./outputs/world.txt"
+#define MONITOR_FILE_LOC_A "./outputs/monitor_a.txt"
+#define WORLD_FILE_LOC_A "./outputs/world_a.txt"
+#define MONITOR_FILE_LOC_B "./outputs/monitor_b.txt"
+#define WORLD_FILE_LOC_B "./outputs/world_b.txt"
+#define MONITOR_WHICH_FILE_TO_USE_FILE_LOC "./outputs/monitor_whichFileToUse.txt"
+#define WORLD_WHICH_FILE_TO_USE_FILE_LOC "./outputs/world_whichFileToUse.txt"

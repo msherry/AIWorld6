@@ -52,7 +52,13 @@ def drawAgent(window,xLoc,yLoc,energy,brainString):
 	pygame.draw.line(window,color,(offset+s*(xLoc)     ,s*yLoc+size),(offset+s*xLoc     ,s*yLoc-size),1)
 	
 def drawWorld(window):
-	f = open("./outputs/world.txt")
+	f = open("./outputs/world_whichFileToUse.txt")
+	s = f.readLines()
+	f.close()	
+	if(s[0] == 'a'):		
+		f = open("./outputs/world_a.txt")
+	else
+		f = open("./outputs/world_b.txt")
 	x = 0
 	y = 0
 	e = 0
@@ -85,7 +91,13 @@ def drawStats(window):
 		
 def getStats():
 	listOfStats = []
-	f = open("./outputs/monitor.txt")
+	f = open("./outputs/monitor_whichFileToUse.txt")
+	s = f.readlines()
+	f.close()
+	if(s[0] == 'a'):
+		f = open("./outputs/monitor_a.txt")
+	else:
+		f = open("./outputs/monitor_b.txt")
 	for line in f.readlines():
 		pairs = line.split(',');
 		for pair in pairs:
