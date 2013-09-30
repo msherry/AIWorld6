@@ -4,7 +4,8 @@
 typedef struct agent
 {
  int xLoc,yLoc; //Agent's location
- int id; //The location in the overall agent array, used only by world
+// int id; //The location in the overall agent array, used only by world
+ int status;  
  int facingDirection; //Agent's facing direction
  float signals[AG_SIGNAL_NUMB];
  float energy; 
@@ -23,4 +24,6 @@ void agent_A_F(agent *ag);
 void agent_R(agent *ag);
 void agent_R_F(agent *ag);
 void agent_GROW(agent *ag);
+
+void agent_save(agent *a, FILE *file);
 #endif

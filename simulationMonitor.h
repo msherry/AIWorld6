@@ -2,7 +2,9 @@
 #define simulationmonitor_h 
 typedef struct simulationMonitor
 {
- int i; 
+ int moves, turns, attacks, grows, replications;
+ double speed, speedDecision, speedAction, speedSeed;
+ int killedBySeeding;
 } simulationMonitor; 
 
 void simulationMonitor_emitMonitors();

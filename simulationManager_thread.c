@@ -5,13 +5,19 @@ extern simulationManager sm;
 void simulationManager_thread_runDecisions(simulationManager_thread_control *tc, functiontype decisionFunction);
 void simulationManager_thread_gatherInputs(simulationManager_thread_control *tc);
 void *simulationManager_thread_run(void *ptr) {
+ int i;
+ double j; 
+ j = 0;
  simulationManager_thread_control* tc = (simulationManager_thread_control*)ptr; 
  while(tc->done == 0)
  {
   if(tc->runAgentDecision == 1) {
-    simulationManager_thread_runDecisions(tc,agent_gatherInputs);
-    simulationManager_thread_runDecisions(tc,agent_makeDecision);
-    tc->runAgentDecision = 0;
+   /*for(i = 0; i < 10000000; i++) {
+    j = j / 2 + i;
+   } */
+   simulationManager_thread_runDecisions(tc,agent_gatherInputs);
+   simulationManager_thread_runDecisions(tc,agent_makeDecision);
+   tc->runAgentDecision = 0;
   }
   else if (tc->runAgentAction == 1) {
   ; //For now the main thread will handle all actions

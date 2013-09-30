@@ -1,3 +1,8 @@
+TODO:
+* Agents are not getting killed when seeding. I suspct they're not being removed down to zero energy...
+* Fix the way files and rendering is done (we're getting half finished files)
+* Add terrain??
+* Fix all these seg-faults. I suspect they're related to the change in killing agents so an agent can be NULL
 
 -----------------------------------
 PROJECT MANAGEMENT

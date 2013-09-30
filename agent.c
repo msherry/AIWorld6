@@ -6,7 +6,11 @@
 extern simulationManager sm;
 
 void agent_kill(agent *ag) {
- sm.w.locs[ag->xLoc][ag->yLoc].a = NULL;
+ if(ag == NULL)
+  printf("killing null agent??\n");
+ world_deleteAgent(&sm.w, ag); 
+ ag->xLoc = AG_NO_LOCATION;
+ ag->yLoc = AG_NO_LOCATION;
  ag->energy = -1;
 }
 
@@ -54,15 +58,16 @@ void agent_performDecidedAction(agent *ag) {
  for(i = 0; i < AG_SIGNAL_NUMB; i++) { //Perform the signals
   ag->signals[i] = ag->br.outputs[AG_SIGNAL+i];
  }
+ //printf("Latest decision is %i\n",ag->br.latestDecision);
  switch(ag->br.latestDecision) {//Each of these is it's own function because they're in the tight loop and every comparison statement counts
-  case(AG_M_F): agent_M_F(ag); break;
-  case(AG_M_L): agent_M_L(ag); break;
-  case(AG_M_R): agent_M_R(ag); break;
-  case(AG_T_L): agent_T_L(ag); break;
-  case(AG_T_R): agent_T_R(ag); break;
-  case(AG_A_F): agent_A_F(ag); break;
-  case(AG_R):   agent_R(ag);   break;
-  case(AG_R_F): agent_R_F(ag); break;
+  case(AG_M_F):  agent_M_F(ag); break;
+  case(AG_M_L):  agent_M_L(ag); break;
+  case(AG_M_R):  agent_M_R(ag); break;
+  case(AG_T_L):  agent_T_L(ag); break;
+  case(AG_T_R):  agent_T_R(ag); break;
+  case(AG_A_F):  agent_A_F(ag); break;
+  case(AG_R):    agent_R(ag);   break;
+  case(AG_R_F):  agent_R_F(ag); break;
   case(AG_GROW): agent_GROW(ag); break;
  }
 }
@@ -70,6 +75,9 @@ void agent_A_F(agent *ag) { //ATTACK
  agent *otherAgent;
  otherAgent = NULL;
  ag->energy -= AG_ATTACK_COST;
+ #ifndef LESS_METRICS
+  sm.smon.attacks += 1; 
+ #endif
  switch(ag->facingDirection) {
   case(UP):    otherAgent = sm.w.locs[ag->xLoc-1][ag->yLoc  ].a; break;
   case(DOWN):  otherAgent = sm.w.locs[ag->xLoc+1][ag->yLoc  ].a; break; 
@@ -94,6 +102,9 @@ void agent_A_F(agent *ag) { //ATTACK
 void agent_M(agent *ag, int x, int y) {
  location *newLoc;
  newLoc = &(sm.w.locs[x][y]);
+ #ifndef LESS_METRICS
+  sm.smon.moves += 1; 
+ #endif
  ag->energy -= AG_MOVE_COST;
  if(newLoc->a == NULL) {
   if(newLoc->p > 0) {
@@ -135,6 +146,9 @@ void agent_M_R(agent *ag) {
  agent_M(ag,x,y);
 }
 void agent_T_R(agent *ag) { //TURN
+ #ifndef LESS_METRICS
+  sm.smon.turns += 1; 
+ #endif
  ag->energy -= AG_TURN_COST;
  switch(ag->facingDirection) {
   case(UP):    ag->facingDirection = RIGHT; break;
@@ -144,6 +158,9 @@ void agent_T_R(agent *ag) { //TURN
  }
 }
 void agent_T_L(agent *ag) {
+ #ifndef LESS_METRICS
+  sm.smon.turns += 1; 
+ #endif
  ag->energy -= AG_TURN_COST;
  switch(ag->facingDirection) {
   case(UP):    ag->facingDirection = LEFT;  break;
@@ -153,10 +170,16 @@ void agent_T_L(agent *ag) {
  }
 }
 void agent_R(agent* ag) {
+ #ifndef LESS_METRICS
+  sm.smon.replications += 1; 
+ #endif
  ag->energy -= AG_REPLICATION_COST; 
  agent_mallocAgent_fromAsex(ag);
 }
 void agent_R_F(agent* ag) {
+ #ifndef LESS_METRICS
+  sm.smon.replications += 1; 
+ #endif
  agent* otherAg;
  ag->energy -= AG_REPLICATION_COST;
  switch(ag->facingDirection) {
@@ -171,6 +194,9 @@ void agent_R_F(agent* ag) {
 }
 void agent_GROW(agent *ag) {
  int i,j;
+ #ifndef LESS_METRICS
+  sm.smon.grows += 1; 
+ #endif
  for(i = -1; i <= 1; i++) {
   for(j = -1; j <= 1; j++) {
    if(sm.w.locs[ag->xLoc+i][ag->yLoc+j].a != NULL && (i != 0 && j != 0)) { //If found agent, and not at the origin
@@ -185,8 +211,10 @@ void agent_GROW(agent *ag) {
 // Creation and reproduction
 //---------------------------------------
 agent* agent_mallocAgent(int x, int y, float e) {
- agent *a;
+ agent *a; 
  a = world_mallocAgent(&(sm.w)); 
+ if(a == NULL)
+  return NULL;
  a->xLoc = x;
  a->yLoc = y;
  a->energy = e;
@@ -196,9 +224,13 @@ agent* agent_mallocAgent(int x, int y, float e) {
 }
 void agent_mallocAgent_fromScratch(int x, int y, float e) {
  agent *a; 
- if(sm.w.locs[x][y].a != NULL)//Kill the agent if this one lands on them
-   sm.w.locs[x][y].a->energy = -1;//The general assumption is any agent with negative energy is dead
+ if(sm.w.locs[x][y].a != NULL) {//Kill the agent if this one lands on them
+  sm.w.locs[x][y].a->energy = -1;//The general assumption is any agent with negative energy is dead
+  sm.smon.killedBySeeding += 1;  
+ }
  a = agent_mallocAgent(x,y,e);
+ if(a == NULL)
+  return;
  brain_makeFromScratch(&(a->br));
 }
 agent* agent_mallocAgent_checkAndMake(agent *a) {
@@ -235,10 +267,11 @@ void agent_mallocAgent_fromSex(agent *a, agent *b) {
 //--------------------
 // SAVING AND LOADING
 //--------------------
-//void agent(FILE* outFile, agent* ag) {
-// printf("Did nothing to save this agent\n");
-//}
-
+void agent_save(agent *a, FILE *file) {
+ fprintf(file,"AG xLoc,%i yLoc,%i energy,%f facingDirection,%i br,",a->xLoc,a->yLoc,a->energy,a->facingDirection);
+ brain_save(&(a->br),file);
+ fprintf(file,"\n");
+}
 
 //----------
 // TESTING

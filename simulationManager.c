@@ -17,7 +17,6 @@ void simulationManager_run()
  simulationManager_cleanupThreads();
 }
 
-
 void simulationManager_setupThreads() {
  int i;
  for(i = 0; i < NUMBER_OF_THREADS; i++) {
@@ -44,11 +43,13 @@ void simulationManager_runIterations(int iterations, int seedInterval, int seedD
    timerB = clock(); 
    ms = timerB - timerA;
    timerA = clock();
-   sm.speed = SIM_REPORT_INTERVAL/(ms/(float)CLOCKS_PER_SEC);
-   sm.speedDecision = (decisionMS/(float)CLOCKS_PER_SEC);
-   sm.speedAction = (actionMS/(float)CLOCKS_PER_SEC);
-   sm.speedSeed = (seedMS/(float)CLOCKS_PER_SEC);
+   sm.smon.speed = SIM_REPORT_INTERVAL/(ms/(float)CLOCKS_PER_SEC);
+   sm.smon.speedDecision = (decisionMS/(float)CLOCKS_PER_SEC);
+   sm.smon.speedAction = (actionMS/(float)CLOCKS_PER_SEC);
+   sm.smon.speedSeed = (seedMS/(float)CLOCKS_PER_SEC);
    simulationMonitor_emitMonitors();
+   simulationMonitor_clear();
+   world_save(&(sm.w));
    seedMS = 0;
    actionMS = 0;
    decisionMS = 0;
@@ -69,9 +70,9 @@ void simulationManager_runIterations(int iterations, int seedInterval, int seedD
 
 void simulationManager_seedAgents() { 
  int i,j;
- for(i = WORLD_BORDER; i < 30; i += 2) {
-  for(j = WORLD_BORDER; j < 30; j += 2) {
-   agent_mallocAgent_fromScratch(i,j,SEED_ENERGY);
+ for(i = WORLD_BORDER; i < SEED_SIZE; i += 2) {
+  for(j = WORLD_BORDER; j < SEED_SIZE; j += 2) {
+   agent_mallocAgent_fromScratch((int)(rand()/(float)RAND_MAX*SEED_SIZE)+WORLD_BORDER,(int)(rand()/(float)RAND_MAX*SEED_SIZE)+WORLD_BORDER,SEED_ENERGY);
   }
  } 
 }
@@ -96,12 +97,12 @@ void simulationManager_runAgentDecisions() { //Multi-threaded
 void simulationManager_runAgentActions() { //Single threaded
  int i;
   //printf("Did nothing to run agent actions\n");
- for(i = 0; i < sm.w.numbAgents; i++) {
-  if(sm.w.agents[i].energy > 0) {
-   agent_performDecidedAction(sm.w.agents + i);
-  }
-  else {
-   agent_kill(sm.w.agents + i);
+ for(i = 0; i < sm.w.numbAgents && sm.w.agents[i].status != AG_STATUS_END_OF_LIST; i++) {
+  if(sm.w.agents[i].status == AG_STATUS_ALIVE) {
+   if(sm.w.agents[i].energy < 0)
+    agent_kill(sm.w.agents + i);
+   else
+    agent_performDecidedAction(sm.w.agents + i);
   }
  }
 }

@@ -12,7 +12,6 @@ typedef struct brain
  int mids[AG_MID_NODES];
  int outputs[AG_OUTPUTS];
  //Connections
- int connsUsed;
  unsigned char inL1[AG_CONNS_L1];
  unsigned char outL1[AG_CONNS_L1];
  unsigned char inL2[AG_CONNS_L2];
@@ -30,6 +29,7 @@ void brain_makeFromSex(brain *newB, brain *b, brain *c);
 void brain_makeConnLvlFromScratch(unsigned char *in, unsigned char inMax, unsigned char *out, unsigned char outMax, float *mult, float mutationRate, int connMax);
 void brain_fillRestWithNoOps(unsigned char *in, unsigned char *out, int connMax, int i);
 void brain_makeConnLvlFromScratch(unsigned char *in, unsigned char inMax, unsigned char *out, unsigned char outMax, float *mult, float mutationRate, int connMax);
-
+//Saving and loading
+void brain_save(brain *b, FILE *file);
 
 #endif

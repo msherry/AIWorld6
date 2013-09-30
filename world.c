@@ -38,9 +38,11 @@ void world_save(world *w)
 {
  int i; 
  FILE *outFile;
- fopen(WORLD_FILE,"w");
+ outFile = fopen(WORLD_FILE,"w");
  for(i = 0; i < w->numbAgents; i++) {
-  ; //agent_save(outFile,w->agents + i);
+  if(w->agents[i].energy > 0) {
+   agent_save(w->agents + i, outFile);
+  }
  }
  fclose(outFile); 
 }
@@ -52,20 +54,23 @@ void world_load(world *w)
 void world_setupAgentList(world *w) {
  int i;
  for(i = 0; i < w->numbAgents; i++) {
-  w->agents[i].id = i;
-  w->agents[i].energy = -1;
+  w->agents[i].status = AG_STATUS_END_OF_LIST; 
+  //w->agents[i].id = i;
+  //w->agents[i].energy = -1;
  }
 }
 agent* world_mallocAgent(world *w) {
- int i,start;
- start = (int)((rand() / (float)RAND_MAX)*w->numbAgents);
- for(i = start; (i - start) < w->numbAgents; i++) {
-  if(w->agents[i%w->numbAgents].energy <= 0) {
-   return w->agents + (i%w->numbAgents);
+ int i; //always start at zero, anything after that one is a null.
+ for(i = 0; i < w->numbAgents; i++) {
+  if(w->agents[i].status == AG_STATUS_DEAD || w->agents[i].status == AG_STATUS_END_OF_LIST) {
+   w->agents[i].status = AG_STATUS_ALIVE;
+   return w->agents + i;
   }
  }
+ return NULL;
 }
 void world_deleteAgent(world *w, agent* a) {
- printf("Don't need to delete, since this is what happens when their energy is too low\n");
+ w->locs[a->xLoc][a->yLoc].a = NULL;
+ a->status = AG_STATUS_DEAD;
 }
 #endif

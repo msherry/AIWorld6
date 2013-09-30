@@ -44,7 +44,7 @@ void brain_makeDecision(brain *br)
  for(i = 0; i < AG_OUTPUTS_DECISIONS; i++) {
   if(outs[i] > max) {
    max = outs[i];
-   br->latestDecision; 
+   br->latestDecision = i; 
   } 
  }
 }
@@ -152,6 +152,23 @@ void brain_makeConnLvlFromSex(unsigned char *in, unsigned char inMax, unsigned c
  }
  i = brain_considerAddingAConn(in,inMax,out,outMax,mult,mutationRate,connMax,i);
  brain_fillRestWithNoOps(in,out,connMax,i);
+}
+//---------------------
+// Saving and loading
+//---------------------
+void brain_save(brain *b, FILE *file) {
+ int i = 0; 
+ fprintf(file,"L1");
+ while(b->inL1[i] != AG_CONN_END) {
+  fprintf(file,";%i:%f:%i",b->inL1[i],b->multL1[i],b->outL1[i]); 
+  i++;
+ }
+ fprintf(file,";L2");
+ i = 0; 
+ while(b->inL2[i] != AG_CONN_END) {
+  fprintf(file,";%i:%f:%i",b->inL2[i],b->multL2[i],b->outL2[i]); 
+  i++;
+ }
 }
 //---------
 // Testing 

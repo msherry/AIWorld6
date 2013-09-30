@@ -4,13 +4,14 @@
 #include "config.c" 
 #include "world.h"
 #include "simulationManager_thread_control.h"
+#include "simulationMonitor.h"
 typedef struct simulationManager
 {
  int i;
  world w;
- double speed, speedDecision, speedAction, speedSeed;
  pthread_t threads[NUMBER_OF_THREADS];
  simulationManager_thread_control threadControls[NUMBER_OF_THREADS];
+ simulationMonitor smon;
 } simulationManager; 
 
 void simulationManager_setupThreads();
