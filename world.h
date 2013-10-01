@@ -14,7 +14,7 @@ typedef struct world
 } world; 
 
 void world_setupAgentList(world *w);
-agent* world_mallocAgent(world *w);
+agent* world_mallocAgent(world *w, int x, int y);
 void world_deleteAgent(world *w, agent *a);
 
 #endif

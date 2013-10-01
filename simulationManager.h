@@ -19,7 +19,8 @@ void simulationManager_cleanupThreads();
 void simulationManager_seedAgents();
 void simulationManager_runAgentDecisions(); //Single-threaded
 void simulationManager_runAgentActions(); //Multi-threaded
-void simulationManager_runIterations(int iterations, int seedInterval, int seedDuration);
+void simulationManager_runIterations_advanced(int iterations, int seedInterval, int seedDuration, int intelTestInterval);
+void simulationManager_runIterations_basic(int iterations);
 void simulationManager_runIntelligenceTests();
 void simulationManager_run();
 

@@ -12,7 +12,7 @@ void simulationManager_run()
  //Load world, run all agent decisions, then act on all agent decisions, then do statistics gathering on this turn, then when it's all done do assessments
  world_createFromScratch(&(sm.w));
  simulationManager_setupThreads();
- simulationManager_runIterations(WORLD_ITERATIONS,SEED_INTERVAL,SEED_DURATION);
+ simulationManager_runIterations_advanced(SIM_ITERATIONS,SIM_SEED_INTERVAL,SIM_SEED_DURATION,SIM_INTEL_TEST_INTERVAL);
  simulationManager_runIntelligenceTests();
  simulationManager_cleanupThreads();
 }
@@ -32,9 +32,15 @@ void simulationManager_cleanupThreads() {
  }
 }
 
-void simulationManager_runIterations(int iterations, int seedInterval, int seedDuration) {
- clock_t timerA, timerB, timerDecision, timerAction, timerSeed;
- double ms, decisionMS, actionMS, seedMS;
+void simulationManager_runIterations_basic(int iterations) {
+ for(sm.i = 0; sm.i < iterations; sm.i++) {
+  simulationManager_runAgentDecisions(); //Multi-threaded
+  simulationManager_runAgentActions(); //Single-threaded
+ }
+}
+void simulationManager_runIterations_advanced(int iterations, int seedInterval, int seedDuration, int intelTestInterval) {
+ clock_t timerA, timerB, timerDecision, timerAction, timerSeed, timerIntel;
+ double ms, decisionMS, actionMS, seedMS, intelMS;
  sm.i = 0;
  timerA = clock();
  for(; sm.i < iterations; sm.i++) {
@@ -47,17 +53,24 @@ void simulationManager_runIterations(int iterations, int seedInterval, int seedD
    sm.smon.speedDecision = (decisionMS/(float)CLOCKS_PER_SEC);
    sm.smon.speedAction = (actionMS/(float)CLOCKS_PER_SEC);
    sm.smon.speedSeed = (seedMS/(float)CLOCKS_PER_SEC);
+   sm.smon.speedIntelTests = (intelMS/(float)CLOCKS_PER_SEC);
    simulationMonitor_emitMonitors();
    simulationMonitor_clear();
    world_save(&(sm.w));
    seedMS = 0;
    actionMS = 0;
    decisionMS = 0;
+   intelMS = 0; 
   } 
   if(sm.i % seedInterval == 0 && sm.i < seedDuration) {
    timerSeed = clock(); 
    simulationManager_seedAgents();
    seedMS += clock() - timerSeed;
+  }
+  if(sm.i % intelTestInterval == 0) {
+   timerIntel = clock();
+   simulationManager_runIntelligenceTests();
+   intelMS += clock() - timerIntel;
   }
   timerDecision = clock();
   simulationManager_runAgentDecisions(); //Multi-threaded
@@ -70,9 +83,9 @@ void simulationManager_runIterations(int iterations, int seedInterval, int seedD
 
 void simulationManager_seedAgents() { 
  int i,j;
- for(i = WORLD_BORDER; i < SEED_SIZE; i += 2) {
-  for(j = WORLD_BORDER; j < SEED_SIZE; j += 2) {
-   agent_mallocAgent_fromScratch((int)(rand()/(float)RAND_MAX*SEED_SIZE)+WORLD_BORDER,(int)(rand()/(float)RAND_MAX*SEED_SIZE)+WORLD_BORDER,SEED_ENERGY);
+ for(i = WORLD_BORDER; i < SIM_SEED_SIZE; i += 2) {
+  for(j = WORLD_BORDER; j < SIM_SEED_SIZE; j += 2) {
+   agent_mallocAgent_fromScratch((int)(rand()/(float)RAND_MAX*SIM_SEED_SIZE)+WORLD_BORDER,(int)(rand()/(float)RAND_MAX*SIM_SEED_SIZE)+WORLD_BORDER,SIM_SEED_ENERGY);
   }
  } 
 }
@@ -108,9 +121,7 @@ void simulationManager_runAgentActions() { //Single threaded
 }
 
 void simulationManager_runIntelligenceTests() {
- intelligenceTestsResults res;
- intelTest_staticAnalysis(&res);
- intelTests_printResults(&res);
+ intelligenceTests_runAllTests(&sm.smon.intelRes);
 }
 
 #endif

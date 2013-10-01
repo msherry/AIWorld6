@@ -1,9 +1,12 @@
 #ifndef simulationmonitor_h 
 #define simulationmonitor_h 
+#include "intelligenceTestsResults.h"
+
 typedef struct simulationMonitor
 {
+ intelligenceTestsResults intelRes;
  int moves, turns, attacks, grows, replications;
- double speed, speedDecision, speedAction, speedSeed;
+ double speed, speedDecision, speedAction, speedSeed, speedIntelTests;
  int killedBySeeding;
  char whichFileToUse;
 } simulationMonitor; 

@@ -8,7 +8,7 @@ void intelTest_surviveNewEnvironment(intelligenceTestsResults *res);
 void intelTest_survivePredator(intelligenceTestsResults *res);
 void intelTest_surviveBetterTogether(intelligenceTestsResults *res);
 extern simulationManager sm;
-void runAllTests(intelligenceTestsResults *res)
+void intelligenceTests_runAllTests(intelligenceTestsResults *res)
 {
  world_save(&(sm.w));
  intelTest_staticAnalysis(res);
@@ -148,7 +148,7 @@ void intelTest_doObviouslyStupidThings(intelligenceTestsResults *res)
 void intelTest_surviveNewEnvironment(intelligenceTestsResults *res)
 {
  world_makeRandomTerrain(&(sm.w));
- simulationManager_runIterations(1000, 0, 0);
+ simulationManager_runIterations_basic(1000); //This is the simplified version of running iterations
  intelTest_staticAnalysis(res);
 }
 void intelTest_survivePredator(intelligenceTestsResults *res)

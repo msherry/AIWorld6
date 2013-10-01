@@ -72,11 +72,18 @@ void world_setupAgentList(world *w) {
   //w->agents[i].energy = -1;
  }
 }
-agent* world_mallocAgent(world *w) {
+agent* world_mallocAgent(world *w,int x,int y) {
  int i; //always start at zero, anything after that one is a null.
+ if(w->locs[x][y].a != NULL) {
+  printf("You tried to allocate an agent on an occupied space?!\n");
+  return NULL; 
+ }
  for(i = 0; i < w->numbAgents; i++) {
   if(w->agents[i].status == AG_STATUS_DEAD || w->agents[i].status == AG_STATUS_END_OF_LIST) {
    w->agents[i].status = AG_STATUS_ALIVE;
+   w->agents[i].xLoc = x;
+   w->agents[i].yLoc = y;
+   w->locs[x][y].a = w->agents + i;
    return w->agents + i;
   }
  }
@@ -84,6 +91,8 @@ agent* world_mallocAgent(world *w) {
 }
 void world_deleteAgent(world *w, agent* a) {
  w->locs[a->xLoc][a->yLoc].a = NULL;
+ a->xLoc = AG_NO_LOCATION;
+ a->yLoc = AG_NO_LOCATION;
  a->status = AG_STATUS_DEAD;
 }
 #endif

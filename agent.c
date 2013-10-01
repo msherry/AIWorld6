@@ -9,8 +9,6 @@ void agent_kill(agent *ag) {
  if(ag == NULL)
   printf("killing null agent??\n");
  world_deleteAgent(&sm.w, ag); 
- ag->xLoc = AG_NO_LOCATION;
- ag->yLoc = AG_NO_LOCATION;
  ag->energy = -1;
 }
 
@@ -212,20 +210,17 @@ void agent_GROW(agent *ag) {
 //---------------------------------------
 agent* agent_mallocAgent(int x, int y, float e) {
  agent *a; 
- a = world_mallocAgent(&(sm.w)); 
+ a = world_mallocAgent(&(sm.w),x,y); 
  if(a == NULL)
   return NULL;
- a->xLoc = x;
- a->yLoc = y;
  a->energy = e;
  a->facingDirection = UP; 
- sm.w.locs[x][y].a = a;
  return a;
 }
 void agent_mallocAgent_fromScratch(int x, int y, float e) {
  agent *a; 
  if(sm.w.locs[x][y].a != NULL) {//Kill the agent if this one lands on them
-  sm.w.locs[x][y].a->energy = -1;//The general assumption is any agent with negative energy is dead
+  agent_kill(sm.w.locs[x][y].a);//The general assumption is any agent with negative energy is dead
   sm.smon.killedBySeeding += 1;  
  }
  a = agent_mallocAgent(x,y,e);
@@ -293,6 +288,7 @@ int agent_test() {
 
 int agent_test_mallocs() {
  int i;
+ world_createFromScratch(&sm.w);
  for(i = 0; i < sm.w.numbAgents; i++) {
   if(sm.w.agents[i].energy > 0) {
    return 0; //No agents shoud have anything yet   

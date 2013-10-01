@@ -11,7 +11,7 @@ void simulationMonitor_emitMonitors() {
  c = 0;
  aveE = 0;
  for(i = 0; i < sm.w.numbAgents; i++) {
-  if(sm.w.agents[i].energy > 0) {
+  if(sm.w.agents[i].status == AG_STATUS_ALIVE) {
    c++; 
    aveE += sm.w.agents[i].energy;
   }
