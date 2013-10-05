@@ -66,4 +66,8 @@ void runTests()
    printf("Passed: Agent tests\n");
  else
    printf("Failed: Agent tests\n");
+ if(world_test() == 1)
+   printf("Passed: World tests\n");
+ else
+   printf("Failed: World tests\n");
 }

@@ -45,7 +45,7 @@ void simulationManager_runIterations_advanced(int iterations, int seedInterval, 
  timerA = clock();
  for(; sm.i < iterations; sm.i++) {
   if(sm.i % SIM_REPORT_INTERVAL == 0) {
-   //printf("Sim has performed %i intervals\n",i);
+   printf("Sim has performed %i intervals\n",sm.i);
    timerB = clock(); 
    ms = timerB - timerA;
    timerA = clock();
@@ -69,7 +69,7 @@ void simulationManager_runIterations_advanced(int iterations, int seedInterval, 
   }
   if(sm.i % intelTestInterval == 0) {
    timerIntel = clock();
-   simulationManager_runIntelligenceTests();
+   //simulationManager_runIntelligenceTests();
    intelMS += clock() - timerIntel;
   }
   timerDecision = clock();

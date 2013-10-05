@@ -170,6 +170,54 @@ void brain_save(brain *b, FILE *file) {
   i++;
  }
 }
+void brain_load(brain *b, char *str, int strLength) {
+ int ptr, lvl, in, out, brainPtr;
+ float mult;
+ ptr = 0;
+ brainPtr;
+ while(str[ptr] != '\n' && ptr < strLength) { //This is clearly the beginning of a designator
+  if(str[ptr] == 'L' && str[ptr+1] == '1') {
+   lvl = 1;
+   ptr += 2;
+   brainPtr = 0;
+  }
+  else if(str[ptr] == ';' && str[ptr+1] == 'L' && str[ptr+2] == '2') {
+   lvl = 2;
+   ptr += 3;
+   b->inL1[brainPtr] = AG_CONN_END;
+   b->outL1[brainPtr] = AG_CONN_END; 
+   brainPtr = 0;
+  }
+  else if(str[ptr] == ';') { //This is clearly the beginning of a connection
+   in = atoi(str+ptr);
+   while(str[ptr] != ':')
+    ptr++;
+   mult = atof(str+ptr);
+   while(str[ptr] != ':')
+    ptr++;
+   out = atoi(str+ptr);
+   while(str[ptr] != ';')
+    ptr++;  
+   if(lvl == 1) {
+    b->inL1[brainPtr] = in;
+    b->multL1[brainPtr] = mult;
+    b->outL1[brainPtr] = out; 
+   }
+   else { 
+    b->inL2[brainPtr] = in;
+    b->multL2[brainPtr] = mult;
+    b->outL2[brainPtr] = out; 
+   }
+   brainPtr++;
+  }
+  else {//Not sure why we're getting these characters...
+   printf("Brain loading: Not sure why I got this random char: %c\n",str[ptr]);  
+   ptr++;
+  }
+ } 
+ b->inL2[brainPtr] = AG_CONN_END;
+ b->outL2[brainPtr] = AG_CONN_END; 
+}
 //---------
 // Testing 
 //---------

@@ -106,6 +106,7 @@ void agent_M(agent *ag, int x, int y) {
  ag->energy -= AG_MOVE_COST;
  if(newLoc->a == NULL) {
   if(newLoc->p > 0) {
+   sm.w.locs[ag->xLoc][ag->yLoc].a = NULL;
    newLoc->a = ag;
    ag->energy -= newLoc->p;
    ag->xLoc = x;
@@ -266,6 +267,45 @@ void agent_save(agent *a, FILE *file) {
  fprintf(file,"AG xLoc,%i yLoc,%i energy,%f facingDirection,%i br,",a->xLoc,a->yLoc,a->energy,a->facingDirection);
  brain_save(&(a->br),file);
  fprintf(file,"\n");
+}
+
+void agent_load(char *str, int strLength) {
+ agent *a;
+ int ptr, namePtr, xLoc, yLoc, facingDirection;
+ float energy;
+ char name[20];
+ ptr = 2;
+ while(ptr < strLength && str[ptr] != '\n') {
+  if(str[ptr] == ' ') { //Begin saving the name
+   namePtr = 0;
+  }
+  else if(str[ptr] == ',') { //Get the value
+   if(name == "xLoc")
+    xLoc = atoi(str+ptr);
+   if(name == "yLoc")
+    yLoc = atoi(str+ptr);
+   if(name == "facingDirection")
+    facingDirection = atoi(str+ptr);
+   if(name == "energy")
+    energy = atof(str+ptr);
+   if(name == "br") { //We should have all the values by now
+    a = world_mallocAgent(&sm.w,xLoc,yLoc);
+    if(a != NULL) {
+     a->energy = energy;
+     a->facingDirection = facingDirection;
+     brain_load(&(a->br),str+ptr,strLength-ptr);
+    }
+   }  
+   while(str[ptr] != ' ' && str[ptr] != '\n') //Advance the pointer after getting the value
+    ptr++;
+  } 
+  else { //Record the characters of the name
+   name[namePtr] = str[ptr];
+   name[namePtr+1] = '\n';
+   namePtr++;
+   ptr++;
+  }
+ }
 }
 
 //----------

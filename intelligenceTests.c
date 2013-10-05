@@ -11,16 +11,17 @@ extern simulationManager sm;
 void intelligenceTests_runAllTests(intelligenceTestsResults *res)
 {
  world_save(&(sm.w));
+ world_save(&(sm.w));
  intelTest_staticAnalysis(res);
- world_load(&(sm.w));
+ world_load(&(sm.w),'a');
  intelTest_doObviouslyStupidThings(res);
- world_load(&(sm.w));
+ world_load(&(sm.w),'a');
  intelTest_surviveNewEnvironment(res);
- world_load(&(sm.w));
+ world_load(&(sm.w),'a');
  intelTest_survivePredator(res);
- world_load(&(sm.w));
+ world_load(&(sm.w),'a');
  intelTest_surviveBetterTogether(res);
- world_load(&(sm.w));
+ world_load(&(sm.w),'a');
 }
 //This is used for sorting arrays, because qsort doesn't have a default compare function
 int cmpfunc (const void * a, const void * b) {

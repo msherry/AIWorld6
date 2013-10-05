@@ -53,11 +53,11 @@ def drawAgent(window,xLoc,yLoc,energy,brainString):
 	
 def drawWorld(window):
 	f = open("./outputs/world_whichFileToUse.txt")
-	s = f.readLines()
+	s = f.readlines()
 	f.close()	
 	if(s[0] == 'a'):		
 		f = open("./outputs/world_a.txt")
-	else
+	else:
 		f = open("./outputs/world_b.txt")
 	x = 0
 	y = 0
