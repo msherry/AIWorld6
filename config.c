@@ -1,6 +1,6 @@
 #define NUMBER_OF_THREADS 2
-#define SIM_ITERATIONS 1000
-#define SIM_REPORT_INTERVAL 100
+#define SIM_ITERATIONS 5000
+#define SIM_REPORT_INTERVAL 50
 #define SIM_INTEL_TEST_INTERVAL 10000
 #define SIM_SEED_INTERVAL 100
 #define SIM_SEED_DURATION 100000
@@ -18,14 +18,19 @@
 #define WORLD_BORDER 3
 #define WORLD_SIZE 100
 
+#define AG_MUTATION_RATE 0.001
+
+#define WORLD_PASS_COST_MULT 0.1
+#define WORLD_FOOD_MULT 1
+
 #define AG_ATTACK_RATE 0.1
 #define AG_ATTACK_EFF 0.5
 #define AG_ATTACK_COST 1
 #define AG_TURN_COST 0.1
 #define AG_MOVE_COST 0.1
 #define AG_GROW_RATE 1
-#define AG_GROW_COST 0.3
-#define AG_REPLICATION_COST 1.0
+#define AG_GROW_COST 0.1
+#define AG_REPLICATION_COST 0.5
 #define AG_REPLICATION_GIVE 3.0
 
 //Outputs from the brain
@@ -60,8 +65,6 @@
 #define AG_IN_PASS 26
 #define AG_IN_AGENE 51
 #define AG_IN_SIGNAL 76
-
-#define AG_MUTATION_RATE 0.001
 
 #define AG_INPUT_MAX 0xFF
 //#define AG_INPUT_MIN -- No inputs are possible to be lower numbers

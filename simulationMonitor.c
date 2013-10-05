@@ -4,7 +4,7 @@
 #include "simulationMonitor.h"
 extern simulationManager sm;
 void simulationMonitor_emitMonitors() {
- int i, c;
+ int i, c, totalActions;
  float aveE;
  FILE *outFile;
  //Gather the stats to output 
@@ -22,8 +22,9 @@ void simulationMonitor_emitMonitors() {
  else
   outFile = fopen(MONITOR_FILE_LOC_A,"w");
  fprintf(outFile,"agents:%i\niterations:%i\naveE:%f\nspeed:%f\nspeedD:%f\nspeedA:%f\nspeedS:%f\n",c,sm.i,aveE/(float)c,sm.smon.speed,sm.smon.speedDecision,sm.smon.speedAction,sm.smon.speedSeed);
- fprintf(outFile,"moves:%i\nturns:%i\nattacks:%i\ngrows:%i\nreplications:%i\n",sm.smon.moves,sm.smon.turns,sm.smon.attacks,sm.smon.grows,sm.smon.replications);
- fprintf(outFile,"killedBySeed:%i\n",sm.smon.killedBySeeding);
+ totalActions = (sm.smon.moves+sm.smon.turns+sm.smon.attacks+sm.smon.grows+sm.smon.replications);
+ fprintf(outFile,"moves:%f\nturns:%f\nattacks:%f\ngrows:%f\nreplications:%f\n",(float)sm.smon.moves/(float)totalActions,(float)sm.smon.turns/(float)totalActions,(float)sm.smon.attacks/(float)totalActions,(float)sm.smon.grows/(float)totalActions,(float)sm.smon.replications/(float)totalActions);
+ fprintf(outFile,"killedBySeed:%i\nkilledByAttacks:%i\nkilledByStarving:%i\n",sm.smon.killedBySeeding,sm.smon.killedByAttacks,sm.smon.killedByStarving);
  fclose(outFile);
  //Close the right monitor 
  outFile = fopen(MONITOR_WHICH_FILE_TO_USE_FILE_LOC,"w");
@@ -44,5 +45,7 @@ void simulationMonitor_clear() {
  sm.smon.grows = 0;
  sm.smon.replications = 0;
  sm.smon.killedBySeeding = 0; 
+ sm.smon.killedByAttacks = 0;
+ sm.smon.killedByStarving = 0;
 }
 #endif

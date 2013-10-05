@@ -74,7 +74,7 @@ void agent_A_F(agent *ag) { //ATTACK
  otherAgent = NULL;
  ag->energy -= AG_ATTACK_COST;
  #ifndef LESS_METRICS
-  sm.smon.attacks += 1; 
+  sm.smon.attacks++; 
  #endif
  switch(ag->facingDirection) {
   case(UP):    otherAgent = sm.w.locs[ag->xLoc-1][ag->yLoc  ].a; break;
@@ -84,12 +84,15 @@ void agent_A_F(agent *ag) { //ATTACK
  }
  if(otherAgent != NULL) {
   if(otherAgent->energy <= 0)
-   agent_kill(otherAgent);
+   agent_kill(otherAgent); //Other agent was already empty
   if(ag->energy <= 0)
    agent_kill(ag);
   if(ag->energy * AG_ATTACK_RATE >= otherAgent->energy) {
    ag->energy += otherAgent->energy * AG_ATTACK_EFF - 0.0001;
    agent_kill(otherAgent);
+   #ifndef LESS_METRICS
+   sm.smon.killedByAttacks++;
+   #endif
   }
   else {
    ag->energy += otherAgent->energy * AG_ATTACK_RATE * AG_ATTACK_EFF -0.0001;
@@ -199,7 +202,7 @@ void agent_GROW(agent *ag) {
  for(i = -1; i <= 1; i++) {
   for(j = -1; j <= 1; j++) {
    if(sm.w.locs[ag->xLoc+i][ag->yLoc+j].a != NULL && (i != 0 && j != 0)) { //If found agent, and not at the origin
-    ag->energy += AG_GROW_COST;
+    ag->energy -= AG_GROW_COST;
     return; 
    }
   }
@@ -278,17 +281,19 @@ void agent_load(char *str, int strLength) {
  while(ptr < strLength && str[ptr] != '\n') {
   if(str[ptr] == ' ') { //Begin saving the name
    namePtr = 0;
+   ptr++;
   }
   else if(str[ptr] == ',') { //Get the value
-   if(name == "xLoc")
+   ptr++;
+   if(strcmp(name,"xLoc") == 0) 
     xLoc = atoi(str+ptr);
-   if(name == "yLoc")
+   if(strcmp(name,"yLoc") == 0)
     yLoc = atoi(str+ptr);
-   if(name == "facingDirection")
+   if(strcmp(name,"facingDirection") == 0)
     facingDirection = atoi(str+ptr);
-   if(name == "energy")
+   if(strcmp(name,"energy") == 0)
     energy = atof(str+ptr);
-   if(name == "br") { //We should have all the values by now
+   if(strcmp(name,"br") == 0) { //We should have all the values by now
     a = world_mallocAgent(&sm.w,xLoc,yLoc);
     if(a != NULL) {
      a->energy = energy;
@@ -301,7 +306,7 @@ void agent_load(char *str, int strLength) {
   } 
   else { //Record the characters of the name
    name[namePtr] = str[ptr];
-   name[namePtr+1] = '\n';
+   name[namePtr+1] = '\0';
    namePtr++;
    ptr++;
   }

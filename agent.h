@@ -13,6 +13,7 @@ typedef struct agent
 } agent; 
 
 void agent_makeDecision(agent *ag);
+void agent_mallocAgent_fromScratch(int x, int y, float e);
 void agent_mallocAgent_fromAsex(agent *a);
 void agent_mallocAgent_fromSex(agent *a, agent *b);
 void agent_M_F(agent *ag);

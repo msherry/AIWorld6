@@ -40,6 +40,7 @@ void runSimulation()
 {
  printf("Running the simulation now!!!!!!!!\n");
  simulationManager_run(); 
+ printf("Done with simulation\n");
 }
 
 void runTests()

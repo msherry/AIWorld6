@@ -1,23 +1,57 @@
 TODO:
-* The intelligence tests are in, but they'll totally screw everything if they world save and load functions are not done and well tested
-* Continue setting up the intelligence tests and result thing.
-* Agents are not getting killed when seeding. I suspct they're not being removed down to zero energy...
-* Add terrain??
-* SEEMS OKISH, need to test - Fix all these seg-faults. I suspect they're related to the change in killing agents so an agent can be NULL
+* FIll out the intelligence tests, or at least run em
 
 -----------------------------------
-PROJECT MANAGEMENT
+GETTING STARTED
 -----------------------------------
-* Intelligence tests - DONE
-* Threading organization - DONE
-* Brain - Setup inputs - DONE
-* Brain - Run output - DONE
-* Brain - Replicate - DONE
-* Agent actions
-* Fix world's edges and agent creation so agents can't go there
-* Seeing functions
+* You will need to install the python library 'pygame' to launch the UI (search for 'apt-get pygame' for how to do this)
+* Run the command 'bash make' to build and run the program.
+
 -----------------------------------
-DESIGN
+IMPLEMENTATION
+-----------------------------------
+
+  PROGRAM STRUCTURE
+
+There is a multi-threaded c program that runs the main simulation. It outputs files to ./outputs/ which are then consumed by a python UI program. The make scrip noted above compiles the c program, launches the python UI, runs the unit-tests on the c program, and then launches the c program to actually run the simulation.
+
+  USE OF MEMORY
+
+There are no 'malloc' memory allocations in this program. All memory used by the simulation is allocated on startup and then maintained within the program. This was done for the sake of speed given that many agents are created and destroyed on a very rapid basis. It also provides a degree of memory stability; if we allocated more memory as life grew you may only find out you allowed the life to grow too much when it crashes the program many hours or days into a run.
+
+  USE OF CLASSES
+
+The program has a rough class structure where structs are used as object classes. They're always saved in a .h file. All functions that operate on a class will start with the name of the class. For example there's 'world.h'/'world.c' the files and then world's functions will start with 'world_' and take a pointer to a world struct as their first argument.
+
+  FILE DESCRIPTIONS
+
+main_ui.py - The python UI
+
+main.c - The main program, just input parsing and calling simulationManager
+
+config.h - This defines many constants used within the program. Some can be changed without having to change anything else such as 'NUMBER_OF_THREADS' or 'AG_MUTATION_RATE'. Others are more tightly coupled such as the mapping of outputs from the brain of an agent.
+
+simulationManager.h/.c - There is a single global instance of this class so that everything can access it without having to be given a pointer to it. The simulation manager is in charge of running the time iterations of the simulation and knowing when to run statistics. Each time-step of the world is broken into a decision phase and an action phase. The simulation manager launches and calls several threads that do decision making and then it's own thread handles the actions. The actions cant be easily multi-threaded because there is so much cross-involvement it wasn't worth doing in V1.
+
+simulationManager_thread.c - This is not a class, but just a file with some complex mutex locks that are used by the simulationManager to wake up and communicate with the threads. It's implemented using several locks, which is complex, but it allows for the simulationManager and the threads to communicate without either of them ever having to use a sleep command and thus losing any time in the back-and-forth.
+
+simulationManager_thread_control.h - This is the data the threads need to be passed initially.
+
+world.h/.c - The world maintains a 2D array of all 'locations'. It also maintains the array of agents, which is  block of memory that it also uses when other parts of the program call it to 'allocate' a new agent in memory. The simulation manager and simulation monitor use that array when they want to iterate through all the agents that exist.
+
+location.h/.c - A location knows what the cost to pass over this location is, how much food is there, and what agent is at this location.
+
+agent.h/.c - An agent has an energy level, is facing a direction, and has a brain. It's functions include the implementation of actions it can take.
+
+brain.h/.c - A brain is a 2-level sparse neural network. That means that instead of every possible connection being defined it's a list with only some connections being defined. This is done because the agent's brains are more likely to act like decision trees or fussy deciders than they are to act like complex pattern matchers. As such, it's more efficient computationally to model them this way. The brain also contains the complex replication logic.
+
+intelligenceTests.c - This is a series of tests used to rate how intelligent the agents are. It's not yet complete r tested.
+
+TESTING
+Each class has it's own unit tests. In each there is a roll-up function named '<className>_test' that captures all of them and returns either 1 or 0. For example 'world_test()'. All the tests are called by main.c when you pass -t as the command line input. They output their results to the console but won't block the continued execution of the program.
+
+-----------------------------------
+DESIGN GOALS / NOTES
 -----------------------------------
 SIMULATION GOALS:
 * Evolve sexual reproduction

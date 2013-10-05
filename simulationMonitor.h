@@ -7,7 +7,7 @@ typedef struct simulationMonitor
  intelligenceTestsResults intelRes;
  int moves, turns, attacks, grows, replications;
  double speed, speedDecision, speedAction, speedSeed, speedIntelTests;
- int killedBySeeding;
+ int killedBySeeding, killedByAttacks, killedByStarving;
  char whichFileToUse;
 } simulationMonitor; 
 

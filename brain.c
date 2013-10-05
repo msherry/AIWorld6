@@ -189,15 +189,18 @@ void brain_load(brain *b, char *str, int strLength) {
    brainPtr = 0;
   }
   else if(str[ptr] == ';') { //This is clearly the beginning of a connection
+   ptr++;
    in = atoi(str+ptr);
    while(str[ptr] != ':')
     ptr++;
+   ptr++;
    mult = atof(str+ptr);
    while(str[ptr] != ':')
     ptr++;
+   ptr++;
    out = atoi(str+ptr);
    while(str[ptr] != ';')
-    ptr++;  
+    ptr++; 
    if(lvl == 1) {
     b->inL1[brainPtr] = in;
     b->multL1[brainPtr] = mult;
