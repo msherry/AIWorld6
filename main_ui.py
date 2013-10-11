@@ -177,12 +177,12 @@ def getStats():
 		f = open("./outputs/monitor_a.txt")
 	else:
 		f = open("./outputs/monitor_b.txt")
-	for line in f.readlines():
-		pairs = line.split(',');
-		for pair in pairs:
-			stat = pair.split(':')
-			if(len(stat) >= 2):
-				listOfStats.append([stat[0],stat[1]])
+	line = list(f)[-1] #We only want the last line
+	pairs = line.split(' ');
+	for pair in pairs:
+		stat = pair.split(',')
+		if(len(stat) >= 2):
+			listOfStats.append([stat[0],stat[1]])
 	return listOfStats
 def saveScreen(window,name):
 	pygame.image.save(window,"./images/%04d.png"%name)

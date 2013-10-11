@@ -1,4 +1,5 @@
 TODO:
+* Add timestamps to the output, and reformat it to be all in a single line
 * What direction do agents initially get to face when they're created??
 * Actually check which load file is most recent and load from that
 * FIll out the intelligence tests, or at least run em

@@ -1,8 +1,18 @@
 #ifndef simulationmonitor_c
 #define simulationmonitor_c
 #include <stdio.h>
+#include <time.h>
 #include "simulationMonitor.h"
 extern simulationManager sm;
+void simulationMonitor_writeTimeStamp(FILE *f) {
+ time_t rawtime;
+ struct tm * timeinfo;
+ char buffer [80];
+  time (&rawtime);
+  timeinfo = localtime (&rawtime);
+  strftime (buffer,80,"%F_%T",timeinfo);
+  fprintf(f,buffer); 
+}
 void simulationMonitor_emitMonitors() {
  int i, c, totalActions;
  float aveE;
@@ -21,10 +31,12 @@ void simulationMonitor_emitMonitors() {
   outFile = fopen(MONITOR_FILE_LOC_B,"w");
  else
   outFile = fopen(MONITOR_FILE_LOC_A,"w");
- fprintf(outFile,"agents:%i\niterations:%i\naveEnergy:%f\nspeed:%f\nspeedD:%f\nspeedA:%f\nspeedS:%f\n",c,sm.i,aveE/(float)c,sm.smon.speed,sm.smon.speedDecision,sm.smon.speedAction,sm.smon.speedSeed);
+ fprintf(outFile,"time,");
+ simulationMonitor_writeTimeStamp(outFile); //TimeStamp doesn't write spaces so you'll need one of those
+ fprintf(outFile," agents,%i iterations,%i aveEnergy,%f speed,%f speedD,%f speedA,%f speedS,%f ",c,sm.i,aveE/(float)c,sm.smon.speed,sm.smon.speedDecision,sm.smon.speedAction,sm.smon.speedSeed);
  totalActions = (sm.smon.moves+sm.smon.turns+sm.smon.attacks+sm.smon.grows+sm.smon.replications);
- fprintf(outFile,"moves:%f\nturns:%f\nattacks:%f\ngrows:%f\nreplications:%f\n",(float)sm.smon.moves/(float)totalActions,(float)sm.smon.turns/(float)totalActions,(float)sm.smon.attacks/(float)totalActions,(float)sm.smon.grows/(float)totalActions,(float)sm.smon.replications/(float)totalActions);
- fprintf(outFile,"killedBySeed:%i\nkilledByAttacks:%i\nkilledByStarving:%i\n",sm.smon.killedBySeeding,sm.smon.killedByAttacks,sm.smon.killedByStarving);
+ fprintf(outFile,"moves,%f turns,%f attacks,%f grows,%f replications,%f ",(float)sm.smon.moves/(float)totalActions,(float)sm.smon.turns/(float)totalActions,(float)sm.smon.attacks/(float)totalActions,(float)sm.smon.grows/(float)totalActions,(float)sm.smon.replications/(float)totalActions);
+ fprintf(outFile,"killedBySeed,%i killedByAttacks,%i killedByStarving,%i\n",sm.smon.killedBySeeding,sm.smon.killedByAttacks,sm.smon.killedByStarving);
  fclose(outFile);
  //Close the right monitor 
  outFile = fopen(MONITOR_WHICH_FILE_TO_USE_FILE_LOC,"w");
