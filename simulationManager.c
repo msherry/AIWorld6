@@ -68,7 +68,7 @@ void simulationManager_runIterations_advanced(int iterations, int seedInterval, 
   }
   if(sm.i % intelTestInterval == 0) {
    timerIntel = clock();
-   //simulationManager_runIntelligenceTests();
+   simulationManager_runIntelligenceTests();
    intelMS += clock() - timerIntel;
   }
   timerDecision = clock();
@@ -122,8 +122,7 @@ void simulationManager_runAgentActions() { //Single threaded
 }
 
 void simulationManager_runIntelligenceTests() {
- intelligenceTests_runAllTests(&sm.smon.intelRes);
- intelTests_printResults(&sm.smon.intelRes);
+ simulationMonitor_runIntelligenceTests();
 }
 
 void simulationManager_load() {

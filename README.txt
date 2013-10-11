@@ -135,7 +135,7 @@ IMPLEMENTATION: Agent actions
 How do we want to use the tests? How do we want to get results??
 * Run them ocassionally along with the other stats to show how well a long-running world is doing.
 * Output them at a specific time with a designed test. Probably into a file, with a timestamp so it's hard to loose and easy to analyze. Also, the numbers will need to be numerous, there's no one number that can sum this so therefore there won't be any small set of numbers either. there will be a big set.
-** Will the output file be human readable or not? Not. It needs to be read by the UI anyways. Maybe even a different UI. Like the simulation UI but also the intelligence analysis UI. Actually, the intelligence analysis can be run out-of-band by loading in the simulation, testing it, and then displaying results.  
+** Will the output file be human readable or not? Not. It will be displayed in the same UI as the rest of the simulation.  
 
 we should do the plumbing first: One simple static analysis, and one simple simulation
 

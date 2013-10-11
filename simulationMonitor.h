@@ -1,16 +1,15 @@
 #ifndef simulationmonitor_h 
 #define simulationmonitor_h 
-#include "intelligenceTestsResults.h"
 
 typedef struct simulationMonitor
 {
- intelligenceTestsResults intelRes;
  int moves, turns, attacks, grows, replications;
  double speed, speedDecision, speedAction, speedSeed, speedIntelTests;
  int killedBySeeding, killedByAttacks, killedByStarving;
  char whichFileToUse;
 } simulationMonitor; 
 
+int simulationMontior_test();
 void simulationMonitor_emitMonitors();
-
+void simulationMonitor_runIntelligenceTests(); //These are all simulations, the static analysis should be done continously.
 #endif

@@ -6,6 +6,7 @@
 #include <math.h>
 
 #include "simulationManager.h" //Includes Pthread.h
+#include "simulationMonitor.h"
 #include "agent.h"
 #include "location.h"
 #include "world.h"//includes location.h
@@ -14,7 +15,6 @@ simulationManager sm;
 #include "location.c"
 #include "world.c"
 #include "threadManager.c"
-#include "intelligenceTests.c"
 #include "brain.c"
 #include "agent.c"
 #include "simulationManager.c"//includes simulationManager.h
@@ -55,10 +55,6 @@ void runTests()
    printf("Passed: Thread manager tests\n");
  else
    printf("Failed: Thread manager tests\n");
- if(intelTest_staticAnalysis_test() == 1)
-   printf("Passed: Static analysis tests\n");
- else
-   printf("Failed: Static analysis tests\n");
  if(simulationManager_thread_test() == 1)
    printf("Passed: Simulation Manager Thread tests\n");
  else
@@ -75,7 +71,7 @@ void runTests()
    printf("Passed: World tests\n");
  else
    printf("Failed: World tests\n");
- if(intelligenceTests_test() == 1)
+ if(simulationMonitor_test() == 1)
    printf("Passed: IntelTest tests\n");
  else
    printf("Failed: IntelTest tests\n");

@@ -48,4 +48,15 @@ void simulationMonitor_clear() {
  sm.smon.killedByAttacks = 0;
  sm.smon.killedByStarving = 0;
 }
+
+void simulationMonitor_runIntelligenceTests() { //These are all simulations, the static analysis should be run continuously
+ printf("Did nothing to run the intelligence tests\n");
+}
+
+//-----------
+// TESTS
+//-----------
+int simulationMonitor_test() {
+ return 0;
+}
 #endif
