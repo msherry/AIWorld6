@@ -1,9 +1,9 @@
 #define NUMBER_OF_THREADS 2
-#define SIM_ITERATIONS 5000
-#define SIM_REPORT_INTERVAL 50
-#define SIM_INTEL_TEST_INTERVAL 10000
+#define SIM_ITERATIONS 200000
+#define SIM_REPORT_INTERVAL 400
+#define SIM_INTEL_TEST_INTERVAL 100000
 #define SIM_SEED_INTERVAL 100
-#define SIM_SEED_DURATION 100000
+#define SIM_SEED_DURATION 10000
 #define SIM_SEED_ENERGY 20
 #define SIM_SEED_SIZE 30
 
@@ -31,7 +31,7 @@
 #define AG_GROW_RATE 1
 #define AG_GROW_COST 0.1
 #define AG_REPLICATION_COST 0.5
-#define AG_REPLICATION_GIVE 3.0
+#define AG_REPLICATION_GIVE 0.3
 
 //Outputs from the brain
 #define AG_OUTPUTS 11
@@ -85,8 +85,13 @@
 #define LEFT 3
 
 #define MONITOR_FILE_LOC_A "./outputs/monitor_a.txt"
-#define WORLD_FILE_LOC_A "./outputs/world_a.txt"
 #define MONITOR_FILE_LOC_B "./outputs/monitor_b.txt"
-#define WORLD_FILE_LOC_B "./outputs/world_b.txt"
+#define WORLD_AGENTS_FILE_LOC_A "./outputs/world_agents_a.txt"
+#define WORLD_AGENTS_FILE_LOC_B "./outputs/world_agents_b.txt"
+#define WORLD_LOCS_FILE_LOC_A "./outputs/world_locs_a.txt"
+#define WORLD_LOCS_FILE_LOC_B "./outputs/world_locs_b.txt"
+#define INTELTESTS_RUNNING_LOG_LOC "./outputs/intelTests_running_log.txt"
+#define INTELTESTS_FILE_LOC_A "./outputs/intelTests_a.txt"
+#define INTELTESTS_FILE_LOC_B "./outputs/intelTests_b.txt"
 #define MONITOR_WHICH_FILE_TO_USE_FILE_LOC "./outputs/monitor_whichFileToUse.txt"
 #define WORLD_WHICH_FILE_TO_USE_FILE_LOC "./outputs/world_whichFileToUse.txt"

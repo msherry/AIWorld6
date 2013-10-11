@@ -111,7 +111,7 @@ void simulationManager_runAgentActions() { //Single threaded
   //printf("Did nothing to run agent actions\n");
  for(i = 0; i < sm.w.numbAgents && sm.w.agents[i].status != AG_STATUS_END_OF_LIST; i++) {
   if(sm.w.agents[i].status == AG_STATUS_ALIVE) {
-   if(sm.w.agents[i].energy < 0) {
+   if(sm.w.agents[i].energy <= 0) {
     agent_kill(sm.w.agents + i);
     sm.smon.killedByStarving++;
    }
@@ -123,6 +123,11 @@ void simulationManager_runAgentActions() { //Single threaded
 
 void simulationManager_runIntelligenceTests() {
  intelligenceTests_runAllTests(&sm.smon.intelRes);
+ intelTests_printResults(&sm.smon.intelRes);
+}
+
+void simulationManager_load() {
+ world_load_fromAOrB(&sm.w,'b'); //TODO: Actually check which is latest and load from that
 }
 
 #endif

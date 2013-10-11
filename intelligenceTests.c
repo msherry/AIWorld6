@@ -10,18 +10,18 @@ void intelTest_surviveBetterTogether(intelligenceTestsResults *res);
 extern simulationManager sm;
 void intelligenceTests_runAllTests(intelligenceTestsResults *res)
 {
- world_save(&(sm.w));
- world_save(&(sm.w));
+ world_save_toAOrB(&(sm.w),'a');
+ world_save_toAOrB(&(sm.w),'a');
  intelTest_staticAnalysis(res);
- world_load(&(sm.w),'a');
+ world_load_fromAOrB(&(sm.w),'a');
  intelTest_doObviouslyStupidThings(res);
- world_load(&(sm.w),'a');
+ world_load_fromAOrB(&(sm.w),'a');
  intelTest_surviveNewEnvironment(res);
- world_load(&(sm.w),'a');
+ world_load_fromAOrB(&(sm.w),'a');
  intelTest_survivePredator(res);
- world_load(&(sm.w),'a');
+ world_load_fromAOrB(&(sm.w),'a');
  intelTest_surviveBetterTogether(res);
- world_load(&(sm.w),'a');
+ world_load_fromAOrB(&(sm.w),'a');
 }
 //This is used for sorting arrays, because qsort doesn't have a default compare function
 int cmpfunc (const void * a, const void * b) {
@@ -44,6 +44,7 @@ void intelTest_staticAnalysis(intelligenceTestsResults *res)
  float listOfAgentsEnergy[na];
  float listOfFood[ws*ws];
  float listOfAgentsFood[na];
+ printf("Beginning static analysis\n");
  res->totalAgents = 0;
  for(i = 0; i < ws; i++) {
    for(j = 0; j < ws; j++) {
@@ -57,10 +58,12 @@ void intelTest_staticAnalysis(intelligenceTestsResults *res)
        listOfAgentsFood[res->totalAgents] = sm.w.locs[i][j].f;
        //How many are there?
        res->totalAgents++;
+       printf("Found an agent at %i,%i\n",i,j);
      }
      //---- Do they have similar DNA? ----
    }
  }
+ printf("Finished static analysis\n");
  qsort(listOfAgentsEnergy,res->totalAgents,sizeof(float),cmpfunc);
  res->energyDistribution[0] = listOfAgentsEnergy[0];
  res->energyDistribution[1] = listOfAgentsEnergy[res->totalAgents/4];
@@ -79,6 +82,11 @@ void intelTest_staticAnalysis(intelligenceTestsResults *res)
  res->worldFoodDistribution[2] = listOfFood[ws*ws*2/4];
  res->worldFoodDistribution[3] = listOfFood[ws*ws*3/4];
  res->worldFoodDistribution[4] = listOfFood[ws*ws-1];
+}
+
+int intelligenceTests_test()
+{
+ return intelTest_staticAnalysis_test();
 }
 int intelTest_staticAnalysis_test()
 {

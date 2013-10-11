@@ -21,7 +21,7 @@ void simulationMonitor_emitMonitors() {
   outFile = fopen(MONITOR_FILE_LOC_B,"w");
  else
   outFile = fopen(MONITOR_FILE_LOC_A,"w");
- fprintf(outFile,"agents:%i\niterations:%i\naveE:%f\nspeed:%f\nspeedD:%f\nspeedA:%f\nspeedS:%f\n",c,sm.i,aveE/(float)c,sm.smon.speed,sm.smon.speedDecision,sm.smon.speedAction,sm.smon.speedSeed);
+ fprintf(outFile,"agents:%i\niterations:%i\naveEnergy:%f\nspeed:%f\nspeedD:%f\nspeedA:%f\nspeedS:%f\n",c,sm.i,aveE/(float)c,sm.smon.speed,sm.smon.speedDecision,sm.smon.speedAction,sm.smon.speedSeed);
  totalActions = (sm.smon.moves+sm.smon.turns+sm.smon.attacks+sm.smon.grows+sm.smon.replications);
  fprintf(outFile,"moves:%f\nturns:%f\nattacks:%f\ngrows:%f\nreplications:%f\n",(float)sm.smon.moves/(float)totalActions,(float)sm.smon.turns/(float)totalActions,(float)sm.smon.attacks/(float)totalActions,(float)sm.smon.grows/(float)totalActions,(float)sm.smon.replications/(float)totalActions);
  fprintf(outFile,"killedBySeed:%i\nkilledByAttacks:%i\nkilledByStarving:%i\n",sm.smon.killedBySeeding,sm.smon.killedByAttacks,sm.smon.killedByStarving);

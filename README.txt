@@ -1,10 +1,21 @@
 TODO:
+* What direction do agents initially get to face when they're created??
+* Actually check which load file is most recent and load from that
 * FIll out the intelligence tests, or at least run em
+** Load needs to also load the terrain
+** Tests need to ourput to somewhere
+** Tests need to actually run several times, like several simulations to test
+* Fill out the two simulation types
+** Long running simulation - Make as intelligent of a population as possible
+** Specific tests - prove the tests, this will have to run several of them if possible. Like 20 or 100 runs and compare the intlligence tests results, as in on a graph of dots or something like that showing the results of all the tests.
+* Modify the output to show many views: Code hash, energy (log), lastAction, signals(all colors)
 
 -----------------------------------
 GETTING STARTED
 -----------------------------------
 * You will need to install the python library 'pygame' to launch the UI (search for 'apt-get pygame' for how to do this)
+* You will need to install 'sudo apt-get libav-tools' which is used when turning all the images into a movie
+* You will need to install imageMagic which is used for turning all the images into a gif
 * Run the command 'bash make' to build and run the program.
 
 -----------------------------------
@@ -53,6 +64,10 @@ Each class has it's own unit tests. In each there is a roll-up function named '<
 -----------------------------------
 DESIGN GOALS / NOTES
 -----------------------------------
+ * use audacity for audio recording
+ * use tunes to tube for audio upload to youtube
+
+ 
 SIMULATION GOALS:
 * Evolve sexual reproduction
 * Evolve cooperative behavior / multi-cellular behavior
@@ -117,3 +132,21 @@ IMPLEMENTATION: Agent actions
 ** attack left
 ** attack right 
 
+How do we want to use the tests? How do we want to get results??
+* Run them ocassionally along with the other stats to show how well a long-running world is doing.
+* Output them at a specific time with a designed test. Probably into a file, with a timestamp so it's hard to loose and easy to analyze. Also, the numbers will need to be numerous, there's no one number that can sum this so therefore there won't be any small set of numbers either. there will be a big set.
+** Will the output file be human readable or not? Not. It needs to be read by the UI anyways. Maybe even a different UI. Like the simulation UI but also the intelligence analysis UI. Actually, the intelligence analysis can be run out-of-band by loading in the simulation, testing it, and then displaying results.  
+
+we should do the plumbing first: One simple static analysis, and one simple simulation
+
+What is the metric we get from each?
+TEST staticAnalysis
+* Of the locations with no-one nearby, how well populated are they? (can they actually fill the world?)
+TEST doObviouslyStupidThings
+* What % of the time are they moving to a square they can't, what % of the time are they replicating with a square that's not there
+TEST replicateWithAnyone
+* What % of the time will they replicate with a presented random agent (at random levels of energy)
+TEST surviveNewEnvironment
+* What 
+TEST survivePredator
+TEST surviveBetterTogether

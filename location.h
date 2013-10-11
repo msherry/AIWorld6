@@ -10,4 +10,5 @@ typedef struct location
  float s[AG_SIGNAL_NUMB];  
 } location; 
 
+void location_save(location *l, FILE *file);
 #endif

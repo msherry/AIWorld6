@@ -38,18 +38,31 @@ void world_makeRandomTerrain(world *w)
  }
 }
 void world_save_toAOrB(world *w, char aOrB) {
- int i; 
+ int i,j; 
  FILE *outFile;
+ //Save the agents
  if(aOrB == 'a') //We have two files and switch between them so the reader can read a compete file in real time.
-  outFile = fopen(WORLD_FILE_LOC_A,"w");
+  outFile = fopen(WORLD_AGENTS_FILE_LOC_A,"w");
  else
-  outFile = fopen(WORLD_FILE_LOC_B,"w");
+  outFile = fopen(WORLD_AGENTS_FILE_LOC_B,"w");
  for(i = 0; i < w->numbAgents && w->agents[i].status != AG_STATUS_END_OF_LIST; i++) {
   if(w->agents[i].status == AG_STATUS_ALIVE > 0) {
    agent_save(w->agents + i, outFile);
   }
  }
- fclose(outFile); 
+ fclose(outFile);
+ //Save the terrain 
+ if(aOrB == 'a') //We have two files and switch between them so the reader can read a compete file in real time.
+  outFile = fopen(WORLD_LOCS_FILE_LOC_A,"w");
+ else
+  outFile = fopen(WORLD_LOCS_FILE_LOC_B,"w");
+ fprintf(outFile,"%i %i ",w->worldSize,AG_SIGNAL_NUMB);
+ for(i = 0; i < w->worldSize; i++) {
+  for(j = 0; j < w->worldSize; j++) {
+   location_save(&(w->locs[i][j]),outFile);
+  }
+ }
+ fclose(outFile);
 }
 void world_save(world *w) {
  int i; 
@@ -70,19 +83,22 @@ void world_save(world *w) {
  }
  fclose(outFile);
 }
-void world_load(world *w, char aOrB)
+void world_load_fromAOrB(world *w, char aOrB)
 {
  FILE *inFile;
  char str[AG_MAX_BUFFER_NEEDED];
  world_clear(w);
  if(aOrB == 'a')
-  inFile = fopen(WORLD_FILE_LOC_A,"r");
+  inFile = fopen(WORLD_AGENTS_FILE_LOC_A,"r");
  else
-  inFile = fopen(WORLD_FILE_LOC_B,"r");
+  inFile = fopen(WORLD_AGENTS_FILE_LOC_B,"r");
  while(fgets(str,AG_MAX_BUFFER_NEEDED,inFile) != NULL) {
   agent_load(str,AG_MAX_BUFFER_NEEDED);  
  } 
  fclose(inFile);
+}
+void world_load(world *w) {
+ world_load_fromAOrB(w,w->whichFileToUse); 
 }
 
 void world_setupAgentList(world *w) {
@@ -140,7 +156,7 @@ int world_test() {
  agent_mallocAgent_fromScratch(2,3,10); 
  agent_mallocAgent_fromScratch(4,5,100); 
  world_save_toAOrB(&sm.w,'b');
- world_load(&sm.w,'a');
+ world_load_fromAOrB(&sm.w,'a');
  if(sm.w.locs[2][3].a != NULL || sm.w.locs[4][5].a != NULL) {
   printf("World test: Agents were still there after a load.\n"); 
   return 0;

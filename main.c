@@ -11,15 +11,16 @@
 #include "world.h"//includes location.h
 simulationManager sm;
 #include "quickSigmoid.c"
+#include "location.c"
 #include "world.c"
 #include "threadManager.c"
 #include "intelligenceTests.c"
 #include "brain.c"
 #include "agent.c"
 #include "simulationManager.c"//includes simulationManager.h
-
 void runTests();
 void runSimulation();
+void runIntelTests();
 int main(int argc, char** argv)
 {
  quickSigmoid_init();
@@ -33,6 +34,9 @@ int main(int argc, char** argv)
     break;
    case 'r': //Run simulation
     runSimulation();
+    break;
+   case 'i': //Run the intel tests on whatever agents were last
+    runIntelTests();
   }
 }
 //Having this top level class as external not only reduces how much we need to pass it around, it also prevents us from having to cross link it at the thread control class, which greatly reduces the #include fancy footwork
@@ -71,4 +75,13 @@ void runTests()
    printf("Passed: World tests\n");
  else
    printf("Failed: World tests\n");
+ if(intelligenceTests_test() == 1)
+   printf("Passed: IntelTest tests\n");
+ else
+   printf("Failed: IntelTest tests\n");
+}
+
+void runIntelTests() {
+ simulationManager_load(); 
+ simulationManager_runIntelligenceTests();
 }

@@ -95,7 +95,7 @@ void agent_A_F(agent *ag) { //ATTACK
    #endif
   }
   else {
-   ag->energy += otherAgent->energy * AG_ATTACK_RATE * AG_ATTACK_EFF -0.0001;
+   ag->energy += ag->energy * AG_ATTACK_RATE * AG_ATTACK_EFF -0.0001;
    otherAgent->energy -= ag->energy * AG_ATTACK_RATE + 0.0001; 
   }
  } 
@@ -112,6 +112,8 @@ void agent_M(agent *ag, int x, int y) {
    sm.w.locs[ag->xLoc][ag->yLoc].a = NULL;
    newLoc->a = ag;
    ag->energy -= newLoc->p;
+   if(newLoc->p < 0)
+    printf("Agent got energy from moving! %f\n",newLoc->p);
    ag->xLoc = x;
    ag->yLoc = y;
   }
@@ -248,8 +250,10 @@ agent* agent_mallocAgent_checkAndMake(agent *a) {
   }
  }  
  if( x > 0 ) { //We did find a location to put it in 
-  e = a->energy/AG_REPLICATION_GIVE;
+  e = a->energy*AG_REPLICATION_GIVE;
   newA = agent_mallocAgent(x,y,e);
+  if(newA != NULL)
+   a->energy -= e;
  }
  return newA;
 }
@@ -267,7 +271,7 @@ void agent_mallocAgent_fromSex(agent *a, agent *b) {
 // SAVING AND LOADING
 //--------------------
 void agent_save(agent *a, FILE *file) {
- fprintf(file,"AG xLoc,%i yLoc,%i energy,%f facingDirection,%i br,",a->xLoc,a->yLoc,a->energy,a->facingDirection);
+ fprintf(file,"AG xLoc,%i yLoc,%i energy,%f facingDirection,%i latestDecision,%i br,",a->xLoc,a->yLoc,a->energy,a->facingDirection,a->br.latestDecision);
  brain_save(&(a->br),file);
  fprintf(file,"\n");
 }
