@@ -3,7 +3,7 @@
 #define SIM_REPORT_INTERVAL 400
 #define SIM_INTEL_TEST_INTERVAL 100000
 #define SIM_SEED_INTERVAL 100
-#define SIM_SEED_DURATION 10000
+#define SIM_SEED_DURATION 60000
 #define SIM_SEED_ENERGY 20
 #define SIM_SEED_SIZE 30
 
@@ -12,7 +12,7 @@
 #define AG_STATUS_ALIVE 1
 #define AG_STATUS_DEAD 0
 #define AG_STATUS_END_OF_LIST -1
-#define AG_NO_LOCATION 0
+#define AG_NO_LOCATION -99
 #define PASS_IMPASSIBLE_INIT -1
 #define PASS_IMPASSIBLE -1
 #define WORLD_BORDER 3
@@ -84,14 +84,11 @@
 #define DOWN 2
 #define LEFT 3
 
-#define MONITOR_FILE_LOC_A "./outputs/monitor_a.txt"
-#define MONITOR_FILE_LOC_B "./outputs/monitor_b.txt"
+#define INTELTESTS_FILE_LOC "./outputs/intelTests.txt" 
+#define MONITOR_FILE_LOC "./outputs/monitor.txt"
+//The world files switch off between A and B in order to maintain consistency in case we kill the process in the middle of saving.
 #define WORLD_AGENTS_FILE_LOC_A "./outputs/world_agents_a.txt"
 #define WORLD_AGENTS_FILE_LOC_B "./outputs/world_agents_b.txt"
 #define WORLD_LOCS_FILE_LOC_A "./outputs/world_locs_a.txt"
 #define WORLD_LOCS_FILE_LOC_B "./outputs/world_locs_b.txt"
-#define INTELTESTS_RUNNING_LOG_LOC "./outputs/intelTests_running_log.txt"
-#define INTELTESTS_FILE_LOC_A "./outputs/intelTests_a.txt"
-#define INTELTESTS_FILE_LOC_B "./outputs/intelTests_b.txt"
-#define MONITOR_WHICH_FILE_TO_USE_FILE_LOC "./outputs/monitor_whichFileToUse.txt"
 #define WORLD_WHICH_FILE_TO_USE_FILE_LOC "./outputs/world_whichFileToUse.txt"

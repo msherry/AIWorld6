@@ -56,7 +56,6 @@ void agent_performDecidedAction(agent *ag) {
  for(i = 0; i < AG_SIGNAL_NUMB; i++) { //Perform the signals
   ag->signals[i] = ag->br.outputs[AG_SIGNAL+i];
  }
- //printf("Latest decision is %i\n",ag->br.latestDecision);
  switch(ag->br.latestDecision) {//Each of these is it's own function because they're in the tight loop and every comparison statement counts
   case(AG_M_F):  agent_M_F(ag); break;
   case(AG_M_L):  agent_M_L(ag); break;
@@ -98,7 +97,12 @@ void agent_A_F(agent *ag) { //ATTACK
    ag->energy += ag->energy * AG_ATTACK_RATE * AG_ATTACK_EFF -0.0001;
    otherAgent->energy -= ag->energy * AG_ATTACK_RATE + 0.0001; 
   }
+ }
+ #ifndef LESS_METRICS
+ else { //The other agent was empty
+  sm.smon.failedAttacks++;
  } 
+ #endif
 }
 void agent_M(agent *ag, int x, int y) {
  location *newLoc;
@@ -118,6 +122,11 @@ void agent_M(agent *ag, int x, int y) {
    ag->yLoc = y;
   }
  }
+ #ifndef LESS_METRICS
+ else { //The othe square is already occupied
+  sm.smon.failedMoves++;
+ }
+ #endif
 }
 void agent_M_F(agent *ag) { //MOVE
  int x,y;
@@ -195,6 +204,11 @@ void agent_R_F(agent* ag) {
  if(otherAg != NULL) {
   agent_mallocAgent_fromSex(ag,otherAg); //Costing is done in that function
  }
+ #ifndef LESS_METRICS
+ else { 
+  sm.smon.failedReplications++;
+ }
+ #endif
 }
 void agent_GROW(agent *ag) {
  int i,j;
@@ -205,6 +219,9 @@ void agent_GROW(agent *ag) {
   for(j = -1; j <= 1; j++) {
    if(sm.w.locs[ag->xLoc+i][ag->yLoc+j].a != NULL && (i != 0 && j != 0)) { //If found agent, and not at the origin
     ag->energy -= AG_GROW_COST;
+    #ifndef LESS_METRICS
+    sm.smon.failedGrows++;
+    #endif
     return; 
    }
   }
@@ -217,8 +234,10 @@ void agent_GROW(agent *ag) {
 agent* agent_mallocAgent(int x, int y, float e) {
  agent *a; 
  a = world_mallocAgent(&(sm.w),x,y); 
- if(a == NULL)
+ if(a == NULL) {
+  printf("Didn't get an agent, returning NULL\n");
   return NULL;
+ }
  a->energy = e;
  a->facingDirection = UP; 
  return a;
@@ -226,7 +245,10 @@ agent* agent_mallocAgent(int x, int y, float e) {
 void agent_mallocAgent_fromScratch(int x, int y, float e) {
  agent *a; 
  if(sm.w.locs[x][y].a != NULL) {//Kill the agent if this one lands on them
-  agent_kill(sm.w.locs[x][y].a);//The general assumption is any agent with negative energy is dead
+  if(x != sm.w.locs[x][y].a->xLoc || y != sm.w.locs[x][y].a->yLoc) {
+   printf("Agent doesn't know where he is, world says %i %i, agent says %i %i\n",x,y,sm.w.locs[x][y].a->xLoc,sm.w.locs[x][y].a->yLoc);
+  }
+  agent_kill(sm.w.locs[x][y].a);
   sm.smon.killedBySeeding += 1;  
  }
  a = agent_mallocAgent(x,y,e);
@@ -267,6 +289,10 @@ void agent_mallocAgent_fromSex(agent *a, agent *b) {
  if(newA != NULL)
   brain_makeFromSex(&(newA->br),&(a->br),&(b->br));
 }
+void agent_print(agent *a) {
+ printf("Agent: %i,%i facting:%i, ene:%f, status:%i\n",a->xLoc,a->yLoc,a->facingDirection,a->energy,a->status);
+ brain_print(&(a->br));
+}
 //--------------------
 // SAVING AND LOADING
 //--------------------
@@ -278,7 +304,7 @@ void agent_save(agent *a, FILE *file) {
 
 void agent_load(char *str, int strLength) {
  agent *a;
- int ptr, namePtr, xLoc, yLoc, facingDirection;
+ int ptr, namePtr, xLoc, yLoc, facingDirection = -1;
  float energy;
  char name[20];
  ptr = 2;
@@ -298,6 +324,10 @@ void agent_load(char *str, int strLength) {
    if(strcmp(name,"energy") == 0)
     energy = atof(str+ptr);
    if(strcmp(name,"br") == 0) { //We should have all the values by now
+    if(xLoc == -1 || yLoc == -1 || facingDirection == -1 || energy == -1) {
+     printf("World loading: All the agent's parameters aren't here\n");
+     error_handler();  
+    }
     a = world_mallocAgent(&sm.w,xLoc,yLoc);
     if(a != NULL) {
      a->energy = energy;
@@ -326,10 +356,8 @@ int agent_test_actions();
 int agent_test() {
  if(agent_test_gatherInputs() == 0)
     return 0;
- if(agent_test_mallocs() == 0) {
-  printf("Failed: Agent mallocs\n");
+ if(agent_test_mallocs() == 0)
   return 0; 
- }
  if(agent_test_actions() == 0) 
   return 0;
  return 1;

@@ -117,7 +117,7 @@ void brain_considerMutatingConn(unsigned char *in, unsigned char inMax, unsigned
 }
 
 int brain_considerAddingAConn(unsigned char *in, unsigned char inMax, unsigned char *out, unsigned char outMax, float *mult, float mutationRate, int connMax, int i) {
- if(rand() / (float)RAND_MAX < mutationRate *0.1 && i < (connMax+1)) { //Add a connection
+ if(rand() / (float)RAND_MAX < mutationRate *0.1 && i < (connMax-1)) { //Add a connection, but the last one is saved for a no-op
   out[i] = rand() / (float)RAND_MAX * outMax;
   in[i] = rand() / (float)RAND_MAX * inMax;
   mult[i] = ((rand() / (float)RAND_MAX) -0.5) * AG_MULT_INIT_RANGE;
@@ -135,7 +135,7 @@ void brain_makeFromSex(brain *newB, brain *b, brain *c) {
  brain_makeConnLvlFromSex(newB->inL2,AG_MID_NODES,newB->outL2,AG_OUTPUTS,newB->multL2,newB->mutationRate,AG_CONNS_L2,b->inL2,b->outL2,b->multL2,c->inL2,c->outL2,c->multL2); 
 }
 void brain_makeConnLvlFromSex(unsigned char *in, unsigned char inMax, unsigned char *out, unsigned char outMax, float *mult, float mutationRate, int connMax, unsigned char *oldInA, unsigned char *oldOutA, float *oldMultA, unsigned char *oldInB, unsigned char *oldOutB, float *oldMultB) {
- int i = 0;
+ int i = 0; //There is an important edge case here where the system might skip the rest of the connections in a brain if there's only a single no-op at the end.
  while(oldInA[i] != AG_CONN_END || oldInB[i] != AG_CONN_END) {
   if(i%2 == 0 && oldInA[i] != AG_CONN_END) { //Alternate which creature we take the data from
    in[i] = oldInA[i];
@@ -156,6 +156,22 @@ void brain_makeConnLvlFromSex(unsigned char *in, unsigned char inMax, unsigned c
 //---------------------
 // Saving and loading
 //---------------------
+void brain_print(brain *b) {
+ int i = 0;
+ printf("L1");
+ while(b->inL1[i] != AG_CONN_END) {
+  printf(";%i:%f:%i",b->inL1[i],b->multL1[i],b->outL1[i]); 
+  i++;
+ }
+ printf(" L1 had %i connections",i);
+ printf(";L2");
+ i = 0; 
+ while(b->inL2[i] != AG_CONN_END) {
+  printf(";%i:%f:%i",b->inL2[i],b->multL2[i],b->outL2[i]); 
+  i++;
+ }
+ printf(" L2 had %i connections\n",i);
+}
 void brain_save(brain *b, FILE *file) {
  int i = 0; 
  fprintf(file,"L1");
@@ -183,9 +199,8 @@ void brain_load(brain *b, char *str, int strLength) {
   }
   else if(str[ptr] == ';' && str[ptr+1] == 'L' && str[ptr+2] == '2') {
    lvl = 2;
+   brain_fillRestWithNoOps(b->inL1,b->outL1,AG_CONNS_L1,brainPtr);
    ptr += 3;
-   b->inL1[brainPtr] = AG_CONN_END;
-   b->outL1[brainPtr] = AG_CONN_END; 
    brainPtr = 0;
   }
   else if(str[ptr] == ';') { //This is clearly the beginning of a connection
@@ -212,14 +227,21 @@ void brain_load(brain *b, char *str, int strLength) {
     b->outL2[brainPtr] = out; 
    }
    brainPtr++;
+   if(lvl == 1 && brainPtr >= AG_CONNS_L1 - 1) {
+    printf("The brain you loaded was too big, it is being compacted foolishly\n");
+    brainPtr = AG_CONNS_L1;
+   } 
+   if(lvl == 2 && brainPtr >= AG_CONNS_L2 - 1) {
+    printf("The brain you loaded was too big, it is being compacted foolishly\n");
+    brainPtr = AG_CONNS_L2;
+   }
   }
   else {//Not sure why we're getting these characters...
    printf("Brain loading: Not sure why I got this random char: %c\n",str[ptr]);  
    ptr++;
   }
  } 
- b->inL2[brainPtr] = AG_CONN_END;
- b->outL2[brainPtr] = AG_CONN_END; 
+ brain_fillRestWithNoOps(b->inL2,b->outL2,AG_CONNS_L2,brainPtr);
 }
 //---------
 // Testing 

@@ -27,28 +27,23 @@ void simulationMonitor_emitMonitors() {
   }
  }
  //Output the file
- if(sm.smon.whichFileToUse == 'a')
-  outFile = fopen(MONITOR_FILE_LOC_B,"w");
- else
-  outFile = fopen(MONITOR_FILE_LOC_A,"w");
+ outFile = fopen(MONITOR_FILE_LOC,"a");
  fprintf(outFile,"time,");
  simulationMonitor_writeTimeStamp(outFile); //TimeStamp doesn't write spaces so you'll need one of those
- fprintf(outFile," agents,%i iterations,%i aveEnergy,%f speed,%f speedD,%f speedA,%f speedS,%f ",c,sm.i,aveE/(float)c,sm.smon.speed,sm.smon.speedDecision,sm.smon.speedAction,sm.smon.speedSeed);
+ fprintf(outFile," agents,%i iterations,%i aveEnergy,%f speed,%f speedD,%f speedA,%f speedS,%f",c,sm.i,aveE/(float)c,sm.smon.speed,sm.smon.speedDecision,sm.smon.speedAction,sm.smon.speedSeed);
  totalActions = (sm.smon.moves+sm.smon.turns+sm.smon.attacks+sm.smon.grows+sm.smon.replications);
- fprintf(outFile,"moves,%f turns,%f attacks,%f grows,%f replications,%f ",(float)sm.smon.moves/(float)totalActions,(float)sm.smon.turns/(float)totalActions,(float)sm.smon.attacks/(float)totalActions,(float)sm.smon.grows/(float)totalActions,(float)sm.smon.replications/(float)totalActions);
- fprintf(outFile,"killedBySeed,%i killedByAttacks,%i killedByStarving,%i\n",sm.smon.killedBySeeding,sm.smon.killedByAttacks,sm.smon.killedByStarving);
+ fprintf(outFile," moves,%f turns,%f attacks,%f grows,%f replications,%f",(float)sm.smon.moves/(float)totalActions,(float)sm.smon.turns/(float)totalActions,(float)sm.smon.attacks/(float)totalActions,(float)sm.smon.grows/(float)totalActions,(float)sm.smon.replications/(float)totalActions);
+ fprintf(outFile," killedBySeed,%i killedByAttacks,%i killedByStarving,%i",sm.smon.killedBySeeding,sm.smon.killedByAttacks,sm.smon.killedByStarving);
+ if(sm.smon.moves != 0)
+  fprintf(outFile," moveFailureRate,%f",(float)sm.smon.failedMoves/(float)sm.smon.moves);
+ if(sm.smon.replications != 0)
+  fprintf(outFile," replicationFailureRate,%f",(float)sm.smon.failedReplications/(float)sm.smon.replications);
+ if(sm.smon.attacks != 0)
+  fprintf(outFile," attackFailureRate,%f",(float)sm.smon.failedAttacks/(float)sm.smon.attacks);
+ if(sm.smon.grows != 0)
+  fprintf(outFile," growFailureRate,%f",(float)sm.smon.failedGrows/(float)sm.smon.grows);
+ fprintf(outFile,"\n"); 
  fclose(outFile);
- //Close the right monitor 
- outFile = fopen(MONITOR_WHICH_FILE_TO_USE_FILE_LOC,"w");
- if(sm.smon.whichFileToUse == 'a'){
-  sm.smon.whichFileToUse = 'b';
-  fprintf(outFile,"b");
- }
- else {
-  sm.smon.whichFileToUse = 'a';
-  fprintf(outFile,"a");
- }
- fclose(outFile); 
 }
 void simulationMonitor_clear() {
  sm.smon.moves = 0;
@@ -59,6 +54,10 @@ void simulationMonitor_clear() {
  sm.smon.killedBySeeding = 0; 
  sm.smon.killedByAttacks = 0;
  sm.smon.killedByStarving = 0;
+ sm.smon.failedMoves = 0;
+ sm.smon.failedReplications = 0;
+ sm.smon.failedAttacks = 0;
+ sm.smon.failedGrows = 0;
 }
 
 void simulationMonitor_runIntelligenceTests() { //These are all simulations, the static analysis should be run continuously

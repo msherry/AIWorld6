@@ -22,6 +22,7 @@ void simulationManager_runAgentActions(); //Multi-threaded
 void simulationManager_runIterations_advanced(int iterations, int seedInterval, int seedDuration, int intelTestInterval);
 void simulationManager_runIterations_basic(int iterations);
 void simulationManager_runIntelligenceTests();
-void simulationManager_run();
+void simulationManager_run(int newWorld);
+void simulationManager_load();
 
 #endif

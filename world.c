@@ -4,6 +4,25 @@
 #include <stdlib.h>
 #include "world.h"
 
+/*void world_checkForConsistentAgents(world *w) {
+ int i,j,k;
+ for(i = 0; i < w->numbAgents && w->agents[i].status != AG_STATUS_END_OF_LIST; i++) {
+  if(w->agents[i].status == AG_STATUS_ALIVE) {
+   if(sm.w.locs[sm.w.agents[i].xLoc][sm.w.agents[i].yLoc].a != &(sm.w.agents[i])) {
+    printf("WARNING: Consistency checker has found agent thinks he's at %i %i but is at..\n");
+    for(j = 0; j < 100; j++) {
+     for(k = 0; k < 100; k++) {
+      if(sm.w.locs[j][k].a == &(sm.w.agents[i]))
+       printf("Found at %i %i\n",j,k);
+     }
+    }
+    printf("Done searching\n");
+    return;
+   }
+  }
+ }
+ printf("All consistent\n");
+}*/
 void world_makeRandomTerrain(world *w);
 void world_clear(world *w);
 void world_createFromScratch(world *w)
@@ -46,8 +65,10 @@ void world_save_toAOrB(world *w, char aOrB) {
  else
   outFile = fopen(WORLD_AGENTS_FILE_LOC_B,"w");
  for(i = 0; i < w->numbAgents && w->agents[i].status != AG_STATUS_END_OF_LIST; i++) {
-  if(w->agents[i].status == AG_STATUS_ALIVE > 0) {
-   agent_save(w->agents + i, outFile);
+  if(w->agents[i].status == AG_STATUS_ALIVE) {
+   if(sm.w.locs[sm.w.agents[i].xLoc][sm.w.agents[i].yLoc].a != &(sm.w.agents[i]))
+     printf("WARNING: World's save function has found this agen'ts location is incorrect\n");
+   agent_save(&(w->agents[i]), outFile);
   }
  }
  fclose(outFile);
@@ -98,7 +119,22 @@ void world_load_fromAOrB(world *w, char aOrB)
  fclose(inFile);
 }
 void world_load(world *w) {
- world_load_fromAOrB(w,w->whichFileToUse); 
+ FILE *inFile;
+ char str[3];
+ inFile = fopen(WORLD_WHICH_FILE_TO_USE_FILE_LOC,"r");
+ fgets(str,3,inFile);
+ if(str[0] == 'a') {
+  printf("Loading from a\n");
+  world_load_fromAOrB(w,'a'); 
+  printf("Loaded from a\n");
+ }
+ else if(str[0] == 'b') {
+  printf("Loading from b\n");
+  world_load_fromAOrB(w,'b');
+  printf("Loaded from a\n");
+ }
+ else
+  printf("World didn't understand what file to load from %c\n",str[0]);
 }
 
 void world_setupAgentList(world *w) {
@@ -113,6 +149,7 @@ agent* world_mallocAgent(world *w,int x,int y) {
  int i; //always start at zero, anything after that one is a null.
  if(w->locs[x][y].a != NULL) {
   printf("You tried to allocate an agent on an occupied space?! %i %i\n",x,y);
+  error_handler(); //This will output the error but not stop the program 
   return NULL; 
  }
  for(i = 0; i < w->numbAgents; i++) {
@@ -120,8 +157,8 @@ agent* world_mallocAgent(world *w,int x,int y) {
    w->agents[i].status = AG_STATUS_ALIVE;
    w->agents[i].xLoc = x;
    w->agents[i].yLoc = y;
-   w->locs[x][y].a = w->agents + i;
-   return w->agents + i;
+   w->locs[x][y].a = &(w->agents[i]);
+   return &(w->agents[i]);
   }
  }
  return NULL;
@@ -136,7 +173,41 @@ void world_deleteAgent(world *w, agent* a) {
 //----------
 // TESTS
 //----------
+int world_test_generalLoadSave();
+int world_test_stressLoadSave();
 int world_test() {
+ if(world_test_generalLoadSave() == 0)
+  return 0;
+ if(world_test_stressLoadSave() == 0)
+  return 0;
+ return 1;
+}
+int world_test_stressLoadSave() {
+ int i,j;
+ world_createFromScratch(&sm.w);
+ for(i = 0; i < WORLD_SIZE; i++) {
+  for(j = 0; j < WORLD_SIZE; j++) {
+   agent_mallocAgent_fromScratch(i,j,100);
+  }
+ }
+ world_save_toAOrB(&sm.w,'a');
+ world_createFromScratch(&sm.w);
+ world_load_fromAOrB(&sm.w,'a');
+ for(i = 0; i < WORLD_SIZE; i++) {
+  for(j = 0; j < WORLD_SIZE;j++) {
+   if(sm.w.locs[i][j].a == NULL) {
+    printf("Missing an agent at %i, %i\n",i,j);
+    return 0;
+   }
+   if(sm.w.locs[i][j].a->xLoc != i || sm.w.locs[i][j].a->yLoc != j) {
+    printf("Agent doesn't know their own location %i = %i , %i = %i\n",sm.w.locs[i][j].a->xLoc,i,sm.w.locs[i][j].a->yLoc,j);
+    return 0;
+   }
+  }
+ }
+ return 1;
+}
+int world_test_generalLoadSave() {
  agent *ag; 
  int br_inL1_3, br_outL1_2;
  float br_multL2_0;

@@ -7,10 +7,12 @@
 #include "simulationMonitor.c"
 #include <pthread.h>
 extern simulationManager sm;
-void simulationManager_run()
+void simulationManager_run(int newWorld)
 {
  //Load world, run all agent decisions, then act on all agent decisions, then do statistics gathering on this turn, then when it's all done do assessments
  world_createFromScratch(&(sm.w));
+ if(newWorld == 0)
+  simulationManager_load();
  simulationManager_setupThreads();
  simulationManager_runIterations_advanced(SIM_ITERATIONS,SIM_SEED_INTERVAL,SIM_SEED_DURATION,SIM_INTEL_TEST_INTERVAL);
  simulationManager_cleanupThreads();
@@ -100,7 +102,7 @@ void simulationManager_signalThreadsToGo() {
 }
 
 void simulationManager_runAgentDecisions() { //Multi-threaded
- int i = 0;
+ int i;
  for(i = 0; i < NUMBER_OF_THREADS; i++) {
   sm.threadControls[i].runAgentDecision = 1; //The thread will turn it back to zero when done 
  }
@@ -108,15 +110,27 @@ void simulationManager_runAgentDecisions() { //Multi-threaded
 }
 void simulationManager_runAgentActions() { //Single threaded
  int i;
+ int j,k;
   //printf("Did nothing to run agent actions\n");
  for(i = 0; i < sm.w.numbAgents && sm.w.agents[i].status != AG_STATUS_END_OF_LIST; i++) {
   if(sm.w.agents[i].status == AG_STATUS_ALIVE) {
    if(sm.w.agents[i].energy <= 0) {
-    agent_kill(sm.w.agents + i);
+    agent_kill(&(sm.w.agents[i]));
     sm.smon.killedByStarving++;
    }
-   else
-    agent_performDecidedAction(sm.w.agents + i);
+   else {
+    if(sm.w.locs[sm.w.agents[i].xLoc][sm.w.agents[i].yLoc].a != &(sm.w.agents[i])) {
+     printf("WARNING: Simulation manager has found agent thinks he's at %i %i but is at..\n");
+     for(j = 0; j < 100; j++) {
+      for(k = 0; k < 100; k++) {
+       if(sm.w.locs[j][k].a == &(sm.w.agents[i]))
+        printf("Found at %i %i\n",j,k);
+      }
+     }
+     printf("Done searching\n");
+    }
+    agent_performDecidedAction(&(sm.w.agents[i]));
+   }
   }
  }
 }
@@ -126,7 +140,7 @@ void simulationManager_runIntelligenceTests() {
 }
 
 void simulationManager_load() {
- world_load_fromAOrB(&sm.w,'b'); //TODO: Actually check which is latest and load from that
+ world_load(&sm.w); 
 }
 
 #endif

@@ -1,15 +1,10 @@
 TODO:
-* Add timestamps to the output, and reformat it to be all in a single line
-* What direction do agents initially get to face when they're created??
-* Actually check which load file is most recent and load from that
-* FIll out the intelligence tests, or at least run em
-** Load needs to also load the terrain
-** Tests need to ourput to somewhere
-** Tests need to actually run several times, like several simulations to test
-* Fill out the two simulation types
-** Long running simulation - Make as intelligent of a population as possible
-** Specific tests - prove the tests, this will have to run several of them if possible. Like 20 or 100 runs and compare the intlligence tests results, as in on a graph of dots or something like that showing the results of all the tests.
-* Modify the output to show many views: Code hash, energy (log), lastAction, signals(all colors)
+* Show on the output their signals
+* SHow on the output an options to montior a specific statistic
+** Make the output scale up and down with size (maybe this shit should be in HTML????)
+* Load needs to also load the terrain
+
+* Create the first test, running many iterations and then an *automatic* analysis of it. What metics were statistically significantly different? 
 
 -----------------------------------
 GETTING STARTED

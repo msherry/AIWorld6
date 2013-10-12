@@ -1,10 +1,12 @@
 
 // includes, system
 #include <stdlib.h>
+#include <execinfo.h>
+#include <signal.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-
+#include <time.h>
 #include "simulationManager.h" //Includes Pthread.h
 #include "simulationMonitor.h"
 #include "agent.h"
@@ -19,11 +21,16 @@ simulationManager sm;
 #include "agent.c"
 #include "simulationManager.c"//includes simulationManager.h
 void runTests();
-void runSimulation();
+void runSimulation(int newWorld);
 void runIntelTests();
+void error_handler(int sig); 
 int main(int argc, char** argv)
 {
+ srand(138159158); //9);
+ //printf("%i\n",time(NULL));
+ //srand(time(NULL));
  quickSigmoid_init();
+ //signal(SIGSEGV,error_handler);
  if(argc != 2) //Assume we're running tests now
   runTests();
  else
@@ -32,18 +39,21 @@ int main(int argc, char** argv)
    case 't': //Run tests
     runTests();
     break;
+   case 'c': //Continue simulation
+    runSimulation(0); 
+    break;
    case 'r': //Run simulation
-    runSimulation();
+    runSimulation(1);
     break;
    case 'i': //Run the intel tests on whatever agents were last
     runIntelTests();
   }
 }
 //Having this top level class as external not only reduces how much we need to pass it around, it also prevents us from having to cross link it at the thread control class, which greatly reduces the #include fancy footwork
-void runSimulation()
+void runSimulation(int newWorld)
 {
  printf("Running the simulation now!!!!!!!!\n");
- simulationManager_run(); 
+ simulationManager_run(newWorld); 
  printf("Done with simulation\n");
 }
 
@@ -80,4 +90,15 @@ void runTests()
 void runIntelTests() {
  simulationManager_load(); 
  simulationManager_runIntelligenceTests();
+}
+
+void error_handler(int sig) {
+  void *array[40];
+  size_t size;
+  // get void*'s for all entries on the stack
+  size = backtrace(array, 40);
+  // print out all the frames to stderr
+  fprintf(stderr, "Error: signal %d:\n", sig);
+  backtrace_symbols_fd(array, size, 1);
+  exit(1); //-- Keep going if possible
 }

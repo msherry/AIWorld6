@@ -28,4 +28,5 @@ void agent_GROW(agent *ag);
 
 void agent_save(agent *a, FILE *file);
 void agent_load(char *str, int strLength);
+void agent_print(agent *a);
 #endif

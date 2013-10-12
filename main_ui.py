@@ -166,24 +166,18 @@ def drawStats(window):
 		i = i+1
 		
 def getStats():
-	listOfStats = []
 	try:
-		f = open("./outputs/monitor_whichFileToUse.txt")
+		listOfStats = []
+		f = open("./outputs/monitor.txt")
+		line = list(f)[-1] #We only want the last line
+		pairs = line.split(' ');
+		for pair in pairs:
+			stat = pair.split(',')
+			if(len(stat) >= 2):
+				listOfStats.append([stat[0],stat[1]])
+		return listOfStats
 	except:
-		return 0;
-	s = f.readlines()
-	f.close()
-	if(s[0] == 'a'):
-		f = open("./outputs/monitor_a.txt")
-	else:
-		f = open("./outputs/monitor_b.txt")
-	line = list(f)[-1] #We only want the last line
-	pairs = line.split(' ');
-	for pair in pairs:
-		stat = pair.split(',')
-		if(len(stat) >= 2):
-			listOfStats.append([stat[0],stat[1]])
-	return listOfStats
+		return 0 #The file might be corrupt because we're in the middle of reading it. That's ok, we'll just wait.
 def saveScreen(window,name):
 	pygame.image.save(window,"./images/%04d.png"%name)
 

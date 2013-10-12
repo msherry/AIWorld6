@@ -5,8 +5,8 @@ typedef struct simulationMonitor
 {
  int moves, turns, attacks, grows, replications;
  double speed, speedDecision, speedAction, speedSeed, speedIntelTests;
+ int failedMoves, failedReplications, failedAttacks, failedGrows;
  int killedBySeeding, killedByAttacks, killedByStarving;
- char whichFileToUse;
 } simulationMonitor; 
 
 int simulationMontior_test();
