@@ -1,10 +1,11 @@
 import pygame
 import time
-
+import statGraphs
 def statList_draw(window,xLoc,yLoc):
 	font = pygame.font.SysFont(None,30)
 	i = 0
 	statList = getStats()
+	statGraphs.saveStats(statList)
 	if(statList == 0):
 		return 0 #In case there's no data to get
 	for stat in statList:

@@ -2,6 +2,7 @@ import pygame
 import time
 import worldMaps
 import statList
+import statGraphs
 def clearDisplay(window):
 	window.fill((0,0,0))
 
