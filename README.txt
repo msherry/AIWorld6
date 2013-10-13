@@ -1,6 +1,7 @@
 TODO:
+* Move the key to the right
 * Show on the output their signals
-* SHow on the output an options to montior a specific statistic
+* Record a history of certain elements and show a graph of them over time (100 data points??)
 ** Make the output scale up and down with size (maybe this shit should be in HTML????)
 * Load needs to also load the terrain
 
