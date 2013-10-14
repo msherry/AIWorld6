@@ -3,7 +3,7 @@ sh ./clearImages
 rm a.out
 rm main.exe
 #gcc -pthread main.c -lm
-gcc -g -rdynamic -pthread ./simulator/main.c -lm
+gcc -g -rdynamic -pthread -Wformat=1 ./simulator/main.c -lm
 cp a.out main.exe
 python ./monitoring_ui/main.py &
 #Before you run the tests you'll want to backup the worlds

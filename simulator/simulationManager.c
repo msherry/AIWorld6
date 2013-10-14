@@ -119,7 +119,7 @@ void simulationManager_runAgentActions() { //Single threaded
     sm.smon.killedByStarving++;
    }
    else {
-    if(sm.w.locs[sm.w.agents[i].xLoc][sm.w.agents[i].yLoc].a != &(sm.w.agents[i])) {
+    /*if(sm.w.locs[sm.w.agents[i].xLoc][sm.w.agents[i].yLoc].a != &(sm.w.agents[i])) {
      printf("WARNING: Simulation manager has found agent thinks he's at %i %i but is at..\n");
      for(j = 0; j < 100; j++) {
       for(k = 0; k < 100; k++) {
@@ -128,7 +128,7 @@ void simulationManager_runAgentActions() { //Single threaded
       }
      }
      printf("Done searching\n");
-    }
+    }*/
     agent_performDecidedAction(&(sm.w.agents[i]));
    }
   }

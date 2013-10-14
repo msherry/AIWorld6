@@ -13,6 +13,7 @@
 #include "location.h"
 #include "world.h"//includes location.h
 simulationManager sm;
+void error_handler(int sig); 
 #include "quickSigmoid.c"
 #include "location.c"
 #include "world.c"
@@ -23,12 +24,10 @@ simulationManager sm;
 void runTests();
 void runSimulation(int newWorld);
 void runIntelTests();
-void error_handler(int sig); 
 int main(int argc, char** argv)
 {
  //srand(138159158); //9);
- printf("%i\n",time(NULL));
- //srand(time(NULL));
+ srand(time(NULL));
  quickSigmoid_init();
  signal(SIGSEGV,error_handler);
  if(argc != 2) //Assume we're running tests now

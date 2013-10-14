@@ -11,7 +11,7 @@ void simulationMonitor_writeTimeStamp(FILE *f) {
   time (&rawtime);
   timeinfo = localtime (&rawtime);
   strftime (buffer,80,"%F_%T",timeinfo);
-  fprintf(f,buffer); 
+  fprintf(f,"%s",buffer); 
 }
 void simulationMonitor_emitMonitors() {
  int i, c, totalActions;

@@ -17,6 +17,7 @@ def checkDataVersion():
 			checkDataVersion.lastVersion = s[0];
 			return s[0]
         except:
+		print "Didn't find which file to use"
                 return 'x'
 checkDataVersion.lastVersion = 'c';
 

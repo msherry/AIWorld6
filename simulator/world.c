@@ -149,7 +149,7 @@ agent* world_mallocAgent(world *w,int x,int y) {
  int i; //always start at zero, anything after that one is a null.
  if(w->locs[x][y].a != NULL) {
   printf("You tried to allocate an agent on an occupied space?! %i %i\n",x,y);
-  error_handler(); //This will output the error but not stop the program 
+  //error_handler(); //This will output the error but not stop the program 
   return NULL; 
  }
  for(i = 0; i < w->numbAgents; i++) {

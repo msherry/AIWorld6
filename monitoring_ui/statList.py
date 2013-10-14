@@ -26,5 +26,5 @@ def getStats():
 				listOfStats.append([stat[0],stat[1]])
 		return listOfStats
 	except:
-		print "I'm not finding it..."
+		print "I'm not finding the monitor file"
 		return 0 #The file might be corrupt because we're in the middle of reading it. That's ok, we'll just wait.

@@ -326,7 +326,7 @@ void agent_load(char *str, int strLength) {
    if(strcmp(name,"br") == 0) { //We should have all the values by now
     if(xLoc == -1 || yLoc == -1 || facingDirection == -1 || energy == -1) {
      printf("World loading: All the agent's parameters aren't here\n");
-     error_handler();  
+     //error_handler();  
     }
     a = world_mallocAgent(&sm.w,xLoc,yLoc);
     if(a != NULL) {
