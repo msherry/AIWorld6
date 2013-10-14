@@ -1,8 +1,16 @@
 import pygame
-def statGraphs_draw():
+def statGraphs_draw(window,x,y,xSize,ySize):
+	stats = ['aveEnergy','attacks','replications']
+	for i in range(0,len(stats)):
+		statGraphs_drawAGraph(window,stats[i],x,y+i*ySize/len(stats),xSize,ySize/len(stats))
 	return 0
 statGraphs_draw.iterationsSeen = 0
 statGraphs_draw.statList = []
+
+def statGraphs_drawAGraph(window,stat,x,y,xSize,ySize):
+	font = pygame.font.SysFont(None,20)
+	sur = font.render(stat,1,(150,150,150))
+	window.blit(sur,(x,y))	
 
 def saveStats(statList):
 	statGraphs_draw.statList.append({})

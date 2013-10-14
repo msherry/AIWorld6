@@ -26,8 +26,8 @@ def saveScreen(window,name):
 
 if __name__ == '__main__':
         import sys
-	displayX = 900
-	displayY = 650
+	displayX = 1200 #300 for text, 450 more for graphs (750), 900-1200 is time graphs
+	displayY = 700 #WorldGraph is 400ish
         imgNumb = 0
         imgMax = 1000
 	pygame.init()
@@ -42,6 +42,7 @@ if __name__ == '__main__':
 			clearDisplay(window)
 			statList.statList_draw(window,10,10)
 			worldMaps.worldMaps_draw(window,300,0,version) #Draw world will clear the display if needed
+			statGraphs.statGraphs_draw(window,900,10,250,600)	
 			pygame.display.flip()	
 			if(imgNumb < imgMax):
 				saveScreen(window,imgNumb)
