@@ -13,6 +13,6 @@ python ./monitoring_ui/main.py &
 #mv -f ./outputs/world_agents_bkp_a.txt ./outputs/world_agents_a.txt
 #mv -f ./outputs/world_agents_bkp_b.txt ./outputs/world_agents_b.txt
 #./main.exe -i
-./main.exe -r
-#./main.exe -c
+#./main.exe -r
+./main.exe -c
 #sh ./buildImages
