@@ -11,25 +11,27 @@ def statGraphs_draw(window,x,y,xSize,ySize):
 def statGraphs_drawAGraph(window,stat,x,y,xSize,ySize):
 	#Draw the label
 	font = pygame.font.SysFont(None,20)
-	sur = font.render(stat,1,(150,150,150))
+	sur = font.render(stat,1,(200,200,200))
 	window.blit(sur,(x,y))
 	#Get the data	
 	ma,mi,listOfData = gatherData(stat)
 	if(listOfData == []):
 		return 0	
 	#Draw the data labels
-	surMax = font.render(str(ma),1,(200,200,200))	
-	surMin = font.render(str(mi),1,(200,200,200))	
+	surMax = font.render(str(ma),1,(150,150,150))	
+	surMin = font.render(str(mi),1,(150,150,150))	
 	window.blit(surMax,(x,y+15))
 	window.blit(surMin,(x,y+ySize-15))
+	#Draw the box
+	pygame.draw.rect(window,(100,100,100),(x-1,y,xSize,ySize),1)	
 	#Plot the data	
-	y += 15 #Move down the graph to make room for the text we added
-	ySize -= 15
+	y += 30 #Move down the graph to make room for the text we added
+	ySize -= 45
 	for i in range(0,len(listOfData)-1): #Only looking at pairs since we draw two lines
 		if((listOfData[i] != None) and (listOfData[i+1] != None)):
 			pygame.draw.line(window,(200,200,200),
-				(int(x+(i)*(xSize/len(statGraphs.statList))),int(y+(listOfData[i]-mi)*ySize/(ma-mi))),
-				(int(x+(i+1)*(xSize/len(statGraphs.statList))),int(y+(listOfData[i+1]-mi)*ySize/(ma-mi))),
+				(int(x+(i)*(xSize/float(len(statGraphs.statList)))),int(y+ySize-(listOfData[i]-mi)*ySize/(ma-mi))),
+				(int(x+(i+1)*(xSize/float(len(statGraphs.statList)))),int(y+ySize-(listOfData[i+1]-mi)*ySize/(ma-mi))),
 				1)
 			#print "data y is d:%f, y:%f, ySize:%f"%(listOfData[i],y,ySize)
 			#print "ma:%f, mi:%f"%(ma,mi)
@@ -40,7 +42,8 @@ def gatherData(stat):
 	listOfData = []
 	for i in range(0,len(statGraphs.statList)):
 		try:	
-			tmp = statGraphs.statList[i][stat]
+			#print "iters seen %i, i %i, statList %i"%(statGraphs.iterationsSeen,i,len(statGraphs.statList))
+			tmp = statGraphs.statList[(statGraphs.iterationsSeen+i)%len(statGraphs.statList)][stat]
 			#print "Tmp is %s"%str(tmp)
 			listOfData.append(tmp)
 		except:
