@@ -9,24 +9,22 @@ def statGraphs_draw(window,x,y,xSize,ySize):
 		statGraphs_drawAGraph(window,stats[i],x,y+i*ySize/len(stats),xSize,ySize/len(stats))
 	return 0
 def statGraphs_drawAGraph(window,stat,x,y,xSize,ySize):
+	#Draw the label
 	font = pygame.font.SysFont(None,20)
 	sur = font.render(stat,1,(150,150,150))
 	window.blit(sur,(x,y))
-	listOfData = []
-	for i in range(0,len(statGraphs.statList)):
-		try:	
-			tmp = statGraphs.statList[i][stat]
-			#print "Tmp is %s"%str(tmp)
-			listOfData.append(tmp)
-		except:
-			1 == 1;
-	if(len(listOfData) < 2):
-		return 0 #Nothing to show
-	ma = max(listOfData)
-	mi = min(listOfData)
-	if ma == mi:
-		ma += 0.5
-		mi -= 0.5
+	#Get the data	
+	ma,mi,listOfData = gatherData(stat)
+	if(listOfData == []):
+		return 0	
+	#Draw the data labels
+	surMax = font.render(str(ma),1,(200,200,200))	
+	surMin = font.render(str(mi),1,(200,200,200))	
+	window.blit(surMax,(x,y+15))
+	window.blit(surMin,(x,y+ySize-15))
+	#Plot the data	
+	y += 15 #Move down the graph to make room for the text we added
+	ySize -= 15
 	for i in range(0,len(listOfData)-1): #Only looking at pairs since we draw two lines
 		if((listOfData[i] != None) and (listOfData[i+1] != None)):
 			pygame.draw.line(window,(200,200,200),
@@ -38,6 +36,24 @@ def statGraphs_drawAGraph(window,stat,x,y,xSize,ySize):
 			#print "Pos is %f %f"%(x+(i)*(xSize/len(statGraphs.statList)),y+(listOfData[i]-mi)*ySize/(ma-mi))
 			#(x+(i)*(xSize/len(statGraphs.statList)),y+(listOfData[i]-mi)*ySize/(ma-mi)),
 			#(x+(i+1)*(xSize/len(statGraphs.statList)),y+(listOfData[i+1]-mi)*ySize/(ma-mi)))
+def gatherData(stat):
+	listOfData = []
+	for i in range(0,len(statGraphs.statList)):
+		try:	
+			tmp = statGraphs.statList[i][stat]
+			#print "Tmp is %s"%str(tmp)
+			listOfData.append(tmp)
+		except:
+			1 == 1;
+	if(len(listOfData) < 2):
+		return 0,0,[] #Nothing to show
+	ma = max(listOfData)
+	mi = min(listOfData)
+	if ma == mi:
+		ma += 0.5
+		mi -= 0.5
+	return ma,mi,listOfData	
+	
 
 def saveStats(statList):
 	statGraphs.statList[statGraphs.iterationsSeen] = {}

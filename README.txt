@@ -1,5 +1,6 @@
 TODO:
-* Move the key to the right
+* Fix the graphs to run continuously instead of rolling over
+* put a box around the graphs so they're not so confusing
 * Show on the output their signals
 * Record a history of certain elements and show a graph of them over time (100 data points??)
 ** Make the output scale up and down with size (maybe this shit should be in HTML????)
