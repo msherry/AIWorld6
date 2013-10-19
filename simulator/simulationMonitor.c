@@ -30,6 +30,7 @@ void simulationMonitor_emitMonitors() {
  outFile = fopen(MONITOR_FILE_LOC,"a");
  fprintf(outFile,"time,");
  simulationMonitor_writeTimeStamp(outFile); //TimeStamp doesn't write spaces so you'll need one of those
+ fprintf(outFile," treatment,%s",sm.treatment);
  fprintf(outFile," agents,%i iterations,%i aveEnergy,%f speed,%f speedD,%f speedA,%f speedS,%f",c,sm.i,aveE/(float)c,sm.smon.speed,sm.smon.speedDecision,sm.smon.speedAction,sm.smon.speedSeed);
  totalActions = (sm.smon.moves+sm.smon.turns+sm.smon.attacks+sm.smon.grows+sm.smon.replications);
  fprintf(outFile," moves,%f turns,%f attacks,%f grows,%f replications,%f",(float)sm.smon.moves/(float)totalActions,(float)sm.smon.turns/(float)totalActions,(float)sm.smon.attacks/(float)totalActions,(float)sm.smon.grows/(float)totalActions,(float)sm.smon.replications/(float)totalActions);

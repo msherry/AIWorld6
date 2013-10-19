@@ -1,10 +1,8 @@
 TODO:
-* Show on the output their signals
-* Record a history of certain elements and show a graph of them over time (100 data points??)
-** Make the output scale up and down with size (maybe this shit should be in HTML????)
-* Load needs to also load the terrain
-
 * Create the first test, running many iterations and then an *automatic* analysis of it. What metics were statistically significantly different? 
+** The first test is: Are they using their signaling or not? We turn off signaling. What then?? Or perhaps even, howe long does it take for them to react without it?? No, the real first test is an A/A test!... but then signaling.
+* Show on the output their signals
+* Load needs to also load the terrain
 
 -----------------------------------
 GETTING STARTED
@@ -13,6 +11,21 @@ GETTING STARTED
 * You will need to install 'sudo apt-get libav-tools' which is used when turning all the images into a movie
 * You will need to install imageMagic which is used for turning all the images into a gif
 * Run the command 'bash make' to build and run the program.
+
+-----------------------------------
+RUNNING EXPERIMENTS
+-----------------------------------
+Experiments should have code in three places:
+* In the config.h as a #define statement telling the compiler to include/exclude code
+* In the main.c file printing out the name of the experiment so it's always clear what code is running
+* In the simulation itself wherever needed. You can always locate all impacts of the experiment easily by searching for the name in the initial define statement.
+
+Experiments that have been coded:
+* A vs. A test
+* No communication
+* Aging - NOT IMPLEMENTED
+* More communication - NOT IMPLEMENTED
+* Only sexual or only asexual reproduction - NOT IMPLEMENTED (should be just another call to asex) 
 
 -----------------------------------
 IMPLEMENTATION

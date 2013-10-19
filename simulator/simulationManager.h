@@ -12,6 +12,7 @@ typedef struct simulationManager
  pthread_t threads[NUMBER_OF_THREADS];
  simulationManager_thread_control threadControls[NUMBER_OF_THREADS];
  simulationMonitor smon;
+ char *treatment;
 } simulationManager; 
 
 void simulationManager_setupThreads();

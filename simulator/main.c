@@ -1,5 +1,6 @@
 
 // includes, system
+#include "config.h"
 #include <stdlib.h>
 #include <execinfo.h>
 #include <signal.h>
@@ -24,6 +25,7 @@ void error_handler(int sig);
 void runTests();
 void runSimulation(int newWorld);
 void runIntelTests();
+void runExperiment();
 int main(int argc, char** argv)
 {
  //srand(138159158); //9);
@@ -46,16 +48,37 @@ int main(int argc, char** argv)
     break;
    case 'i': //Run the intel tests on whatever agents were last
     runIntelTests();
+    break;
+   case 'e': //Run an experiment
+    runExperiment();
+    break;
   }
 }
 //Having this top level class as external not only reduces how much we need to pass it around, it also prevents us from having to cross link it at the thread control class, which greatly reduces the #include fancy footwork
 void runSimulation(int newWorld)
 {
- printf("Running the simulation now!!!!!!!!\n");
+ sm.treatment = "a0"; 
  simulationManager_run(newWorld); 
- printf("Done with simulation\n");
 }
-
+void runIntelTests() {
+ simulationManager_load(); 
+ simulationManager_runIntelligenceTests();
+}
+void runExperiment() {
+ int i;
+ #ifdef EXP_NO_COMMUNICATION
+ printf("Running experiment: No communication\n");
+ #endif
+ #ifdef EXP_AA_TEST
+ printf("Running experiment: A vs. A test\n");
+ #endif
+ for(i = 0; i < 10; i++) {
+  sm.treatment = "a%i",i;
+  simulationManager_run(1);
+  sm.treatment = "b%i",i;
+  simulationManager_run(1);
+ }
+}
 void runTests()
 {
  world *w;
@@ -85,12 +108,6 @@ void runTests()
  else
    printf("Failed: IntelTest tests\n");
 }
-
-void runIntelTests() {
- simulationManager_load(); 
- simulationManager_runIntelligenceTests();
-}
-
 void error_handler(int sig) {
   void *array[40];
   size_t size;

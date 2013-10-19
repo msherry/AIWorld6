@@ -41,7 +41,12 @@ void agent_gatherInputs(agent *ag) {
      ag->br.inputs[AG_IN_AGENE+i*5+j] = tmpLoc->a->energy/20*AG_INT_CONVERSION;  //Energy is reduced cuz its a big eumber ususally
    }
    for(k = 0; k < AG_SIGNAL_NUMB; k++) {
+    #ifndef EXP_NO_COMMUNICATION
     ag->br.inputs[AG_IN_SIGNAL+AG_INPUT_TYPE_SIZE*k+i*5+j] = tmpLoc->s[k]*AG_INT_CONVERSION;  
+    #endif
+    #ifdef EXP_NO_COMMUNICATION
+    ag->br.inputs[AG_IN_SIGNAL+AG_INPUT_TYPE_SIZE*k+i*5+j] = 0;  
+    #endif
    }
   }
  }
