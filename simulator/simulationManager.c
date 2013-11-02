@@ -114,6 +114,9 @@ void simulationManager_runAgentActions() { //Single threaded
   //printf("Did nothing to run agent actions\n");
  for(i = 0; i < sm.w.numbAgents && sm.w.agents[i].status != AG_STATUS_END_OF_LIST; i++) {
   if(sm.w.agents[i].status == AG_STATUS_ALIVE) {
+   if(sm.w.agents[i].energy >= AG_MAX_ENERGY) {
+    sm.w.agents[i].energy = AG_MAX_ENERGY;
+   } 
    if(sm.w.agents[i].energy <= 0) {
     agent_kill(&(sm.w.agents[i]));
     sm.smon.killedByStarving++;

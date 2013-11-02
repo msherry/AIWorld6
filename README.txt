@@ -1,4 +1,6 @@
 TODO:
+* Add age to the agents
+* Add mutation rate measure to the agents - DONE
 * Create the first test, running many iterations and then an *automatic* analysis of it. What metics were statistically significantly different? 
 ** The first test is: Are they using their signaling or not? We turn off signaling. What then?? Or perhaps even, howe long does it take for them to react without it?? No, the real first test is an A/A test!... but then signaling.
 * Show on the output their signals

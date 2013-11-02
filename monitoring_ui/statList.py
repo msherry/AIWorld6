@@ -2,7 +2,7 @@ import pygame
 import time
 import statGraphs
 def statList_draw(window,xLoc,yLoc):
-	font = pygame.font.SysFont(None,30)
+	font = pygame.font.SysFont(None,25)
 	i = 0
 	statList = getStats()
 	statGraphs.saveStats(statList)
@@ -11,7 +11,7 @@ def statList_draw(window,xLoc,yLoc):
 	for stat in statList:
 		textToDisplay = "%s: %s"%(stat[0].strip(),stat[1].strip()) #You cant use \t here
 		sur = font.render(textToDisplay,1,(150,150,150))
-		window.blit(sur,(xLoc,yLoc+i*30))
+		window.blit(sur,(xLoc,yLoc+i*25))
 		i = i+1
 		
 def getStats():

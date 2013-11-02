@@ -7,6 +7,7 @@ typedef struct simulationMonitor
  double speed, speedDecision, speedAction, speedSeed, speedIntelTests;
  int failedMoves, failedReplications, failedAttacks, failedGrows;
  int killedBySeeding, killedByAttacks, killedByStarving;
+ int addedCon, didntAddCon, removedCon, didntRemoveCon;
 } simulationMonitor; 
 
 int simulationMontior_test();

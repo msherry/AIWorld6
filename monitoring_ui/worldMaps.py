@@ -71,7 +71,13 @@ def drawAgentEnergy(window,x,y,xOffset,yOffset,size,e):
 		r = 255
 		g = 255
 		b = 255
-	pygame.draw.rect(window,(r,g,b),(x*size+xOffset,y*size+yOffset,size,size))		
+	try:
+		pygame.draw.rect(window,(r,g,b),(x*size+xOffset,y*size+yOffset,size,size))		
+	except:
+		print "Problem with the agent's energy color:"
+		print e
+		print (r,g,b)
+		a = 1/0
 
 def drawAgentBrain(window,xLoc,yLoc,xOffset,yOffset,size,brainString):
 	color = getBrainColor(brainString)

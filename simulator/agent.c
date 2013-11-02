@@ -53,6 +53,9 @@ void agent_gatherInputs(agent *ag) {
 }
 
 void agent_makeDecision(agent *ag) {
+ #ifndef LESS_METRICS
+ ag->age++;
+ #endif
  brain_makeDecision(&(ag->br));
 }
  
@@ -244,6 +247,7 @@ agent* agent_mallocAgent(int x, int y, float e) {
   return NULL;
  }
  a->energy = e;
+ a->age = 0;
  a->facingDirection = UP; 
  return a;
 }
@@ -302,14 +306,14 @@ void agent_print(agent *a) {
 // SAVING AND LOADING
 //--------------------
 void agent_save(agent *a, FILE *file) {
- fprintf(file,"AG xLoc,%i yLoc,%i energy,%f facingDirection,%i latestDecision,%i br,",a->xLoc,a->yLoc,a->energy,a->facingDirection,a->br.latestDecision);
+ fprintf(file,"AG xLoc,%i yLoc,%i energy,%f facingDirection,%i latestDecision,%i age,%i br,",a->xLoc,a->yLoc,a->energy,a->facingDirection,a->br.latestDecision,a->age);
  brain_save(&(a->br),file);
  fprintf(file,"\n");
 }
 
 void agent_load(char *str, int strLength) {
  agent *a;
- int ptr, namePtr, xLoc, yLoc, facingDirection = -1;
+ int ptr, namePtr, xLoc, yLoc, facingDirection, age = -1;
  float energy;
  char name[20];
  ptr = 2;
@@ -324,6 +328,8 @@ void agent_load(char *str, int strLength) {
     xLoc = atoi(str+ptr);
    if(strcmp(name,"yLoc") == 0)
     yLoc = atoi(str+ptr);
+   if(strcmp(name,"age") == 0)
+    age = atoi(str+ptr);
    if(strcmp(name,"facingDirection") == 0)
     facingDirection = atoi(str+ptr);
    if(strcmp(name,"energy") == 0)
@@ -337,6 +343,7 @@ void agent_load(char *str, int strLength) {
     if(a != NULL) {
      a->energy = energy;
      a->facingDirection = facingDirection;
+     a->age = age;
      brain_load(&(a->br),str+ptr,strLength-ptr);
     }
    }  

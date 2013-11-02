@@ -108,21 +108,35 @@ void brain_considerMutatingConn(unsigned char *in, unsigned char inMax, unsigned
    mult[i] = AG_MULT_MIN; 
   }
  }
- if(rand() / (float)RAND_MAX < mutationRate *0.1) { //delete the connection
+ if(rand() / (float)RAND_MAX < mutationRate) { //delete the connection
   mult[i] == 0; 
+  #ifndef LESS_METRICS 
+  sm.smon.removedCon++;
+  #endif
   if(in[i+1] == AG_CONN_END) { //This is the last, delete it
    in[i] = AG_CONN_END;
   }
  }
+ #ifndef LESS_METRICS
+ else {
+  sm.smon.didntRemoveCon++;
+ }
+ #endif
 }
 
 int brain_considerAddingAConn(unsigned char *in, unsigned char inMax, unsigned char *out, unsigned char outMax, float *mult, float mutationRate, int connMax, int i) {
- if(rand() / (float)RAND_MAX < mutationRate *0.1 && i < (connMax-1)) { //Add a connection, but the last one is saved for a no-op
+ if(rand() / (float)RAND_MAX < mutationRate && i < (connMax-1)) { //Add a connection, but the last one is saved for a no-op
+  #ifndef LESS_METRICS
+  sm.smon.addedCon++;
+  #endif
   out[i] = rand() / (float)RAND_MAX * outMax;
   in[i] = rand() / (float)RAND_MAX * inMax;
   mult[i] = ((rand() / (float)RAND_MAX) -0.5) * AG_MULT_INIT_RANGE;
   i++;
  }
+ #ifndef LESS_METRICS
+ sm.smon.didntAddCon++;
+ #endif
  return i;
 }
 //---------------------

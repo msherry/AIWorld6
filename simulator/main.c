@@ -1,6 +1,6 @@
 
 // includes, system
-#include "config.h"
+#include "config.c"
 #include <stdlib.h>
 #include <execinfo.h>
 #include <signal.h>
