@@ -1,1 +1,0 @@
-time,2013-10-11_10:20:31 agents,255 iterations,1200 aveEnergy,29.690815 speed,182.648402 speedD,1.630000 speedA,0.430000 speedS,0.030000 moves,0.358241 turns,0.133285 attacks,0.031152 grows,0.372945 replications,0.104377 killedBySeed,189 killedByAttacks,314 killedByStarving,6760
